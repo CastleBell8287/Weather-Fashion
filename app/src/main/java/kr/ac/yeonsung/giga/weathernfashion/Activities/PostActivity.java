@@ -4,8 +4,11 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Address;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +44,8 @@ public class PostActivity extends AppCompatActivity {
             ,choice_post_categotis2,post_selected_category;
     EditText post_title,post_main_text;
     ImageView post_img;
-
-
+    List<String> mSelectedItems;
+    AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,23 +62,75 @@ public class PostActivity extends AppCompatActivity {
         post_img = findViewById(R.id.post_img);
 
         //리스너 등록
-        back_to_post_main.setOnClickListener(back_to);
+//        back_to_post_main.setOnClickListener(back_to);
         post_img.setOnClickListener(get_post_img);
-        choice_post_categotis.setOnClickListener(choice_post_categoty);
+//        choice_post_categotis.setOnClickListener(choice_post_categoty);
+        choice_post_categotis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+        });
+    }
+//
+//    View.OnClickListener choice_post_categoty = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            Intent intent1 = new Intent(getApplicationContext(), PopupActivity.class);
+//
+//            try{
+//                startActivityForResult(intent1,0);
+//            }catch (NullPointerException e){
+//                e.printStackTrace();
+//            }catch (RuntimeException e){
+//
+//            }
+//
+//
+//        }
+//    };
+
+
+
+    public void showDialog(){
+        mSelectedItems = new ArrayList<>();
+        builder = new AlertDialog.Builder(PostActivity.this);
+        builder.setTitle(" 카테고리 선택");
+        builder.setMultiChoiceItems(R.array.categoris, null, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                String[] items = getResources().getStringArray(R.array.categoris);
+                if(isChecked){
+                    mSelectedItems.add(items[which]);
+                }else if(mSelectedItems.contains(items[which])){
+                    mSelectedItems.remove(items[which]);
+                }
+            }
+        });
+
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String final_selection = "";
+                for(String item : mSelectedItems){
+                    final_selection = final_selection +" "+item;
+                }
+                Toast.makeText(getApplicationContext()," 선택 카테고리 "+ final_selection , Toast.LENGTH_SHORT).show();
+                post_selected_category.setText(final_selection);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 
-    View.OnClickListener choice_post_categoty = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent intent1 = new Intent(getApplicationContext(), PopupActivity.class);
-            try {
-                startActivityForResult(intent1, 1);
-            }catch (NullPointerException e){
-                System.out.println("캐치캐치");
-                e.printStackTrace();
-            }
-        }
-    };
+
 
     @Override
     protected void onActivityResult(int requestCode,
@@ -101,13 +157,13 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
-    //상단 뒤로가기
-    View.OnClickListener back_to = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            postMethods.onBackPresse(PostActivity.this);
-        }
-    };
+//    상단 뒤로가기
+//    View.OnClickListener back_to = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            postMethods.onBackPresse(PostActivity.this);
+//        }
+//    };
 
 
     // 사진 갤러리에서 선택
@@ -118,9 +174,9 @@ public class PostActivity extends AppCompatActivity {
             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
             galleryIntent.setType("image/");
             activityResult.launch(galleryIntent);
-
         }
     };
+
     ActivityResultLauncher<Intent> activityResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -141,7 +197,7 @@ public class PostActivity extends AppCompatActivity {
                 }
             }
     );
-   // 사진 갤러리에서 선택
+    // 사진 갤러리에서 선택
 
     private void showExif(ExifInterface exif) {
         String attrLATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
