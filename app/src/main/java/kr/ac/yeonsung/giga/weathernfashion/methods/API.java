@@ -4,7 +4,6 @@ package kr.ac.yeonsung.giga.weathernfashion.methods;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -15,27 +14,22 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.*;
 import java.util.*;
 
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Weather;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class API {
     DatabaseReference mDatabase ;
@@ -84,7 +78,6 @@ public class API {
             lon = location.getLongitude();
             lat = location.getLatitude();
 
-
         }
         if (ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_MEDIA_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity,
@@ -95,6 +88,8 @@ public class API {
 
 
     }
+
+
     public void getWeatherNow(Activity activity, ImageView imageView, TextView nowTemp, TextView nowWeather, TextView si, TextView gu, TextView dong,
                               TextView mintemp, TextView maxtemp, TextView feeltemp, TextView humidity, TextView wind_speed, TextView cloud, TextView weatherCode){
         try {

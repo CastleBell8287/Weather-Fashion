@@ -2,15 +2,12 @@ package kr.ac.yeonsung.giga.weathernfashion.methods;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
-import android.webkit.MimeTypeMap;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,9 +16,14 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import kr.ac.yeonsung.giga.weathernfashion.Activities.PostActivity;
-import kr.ac.yeonsung.giga.weathernfashion.Fragment.BoardFragment;
-import kr.ac.yeonsung.giga.weathernfashion.Fragment.HomeFragment;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PostMethods extends Activity {
 
@@ -77,6 +79,75 @@ public class PostMethods extends Activity {
             }
         });
     }
+
+    public void getWeatherNow_post(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
+        try {
+
+            time = time.replaceFirst(":", "-");
+            time = time.replaceFirst(":", "-");
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            Date dateformat = sdf.parse(time);
+
+            long timestamp = dateformat.getTime();
+
+            System.out.println("데이트 파스 : "+timestamp);
+            URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+lat_post+"&lon="+lon_post
+                    +"&lang=kr&dt="+timestamp+"&appid=623ffab3e9d338b9916bd0b0e33d5d87&units=metric");
+            BufferedReader bf;
+            String line;
+            String result="";
+
+            //날씨 정보를 받아온다.
+            bf = new BufferedReader(new InputStreamReader(url.openStream()));
+
+            //버퍼에 있는 정보를 문자열로 변환.
+            while((line=bf.readLine())!=null){
+                result=result.concat(line+"\n");
+            }
+            System.out.println(result);
+            //문자열을 JSON으로 파싱
+            JSONObject jsonObj = new JSONObject(result);
+            JSONObject main = jsonObj.getJSONObject("main");
+            JSONArray weather = jsonObj.getJSONArray("weather");
+            JSONObject wind = jsonObj.getJSONObject("wind");
+            JSONObject clouds = jsonObj.getJSONObject("clouds");
+            JSONObject weatherdesc = weather.getJSONObject(0);
+
+            String temp_str;
+            String min_temp;
+            String max_temp;
+            if (main.getString("temp").contains(".")) {
+                int temp_idx = main.getString("temp").indexOf(".");
+                temp_str = main.getString("temp").substring(0,temp_idx);
+            } else {
+                temp_str = main.getString("temp");
+            }
+            if (main.getString("temp_min").contains(".")) {
+                int min_temp_idx = main.getString("temp_min").indexOf(".");
+                min_temp = main.getString("temp_min").substring(0,min_temp_idx);  // 소수점 첫째 자리까지만 출력
+            } else{
+                min_temp = main.getString("temp_min");
+            }
+
+            if (main.getString("temp_max").contains(".")) {
+                int max_temp_idx = main.getString("temp_max").indexOf(".");
+                max_temp = main.getString("temp_max").substring(0,max_temp_idx);  // 소수점 첫째 자리까지만 출력
+            } else{
+                max_temp = main.getString("temp_max");
+            }
+            mintemp.setText(min_temp+"º");
+            maxtemp.setText(max_temp+"º");
+            temp.setText(temp_str+"º");
+            date.setText(time);
+            date.setVisibility(View.VISIBLE);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
 
 //
 //    private String getFileExtension(Uri uri){
