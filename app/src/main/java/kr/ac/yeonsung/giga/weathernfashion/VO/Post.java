@@ -4,27 +4,40 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Post {
-    private String post_id;
+    private String post_title;
     private String post_content;
     private String post_image;
-    private String user_email;
-    private Long min_temp;
-    private Long max_temp;
-    private int likeCount = 0;
-    private HashMap<String, Boolean> likes = new HashMap<>();
-    private ArrayList categoris;
+    private String post_user_name;
+    private String post_min_temp;
+    private String post_max_temp;
+    private String post_location;
+    private String post_date;
+    private String post_now_date;
+    private Long post_likeCount;
+    private HashMap<String, Boolean> post_likes = new HashMap<>();
+    private ArrayList<String> post_categories;
 
-    public Post(String post_id, String post_content, String post_image, String user_email, Long min_temp,
-                Long max_temp , int likeCount, HashMap<String, Boolean> likes, ArrayList categoris){
-        this.post_id = post_id;
+    public Post(String post_title, String post_content, String post_image, String post_user_name, String post_min_temp, String post_max_temp, String post_location, String post_date, String post_now_date, Long post_likeCount, HashMap<String, Boolean> post_likes, ArrayList<String> post_categories) {
+        this.post_title = post_title;
+        this.post_content = post_content;
+        this.post_image = post_image;
+        this.post_user_name = post_user_name;
+        this.post_min_temp = post_min_temp;
+        this.post_max_temp = post_max_temp;
+        this.post_location = post_location;
+        this.post_date = post_date;
+        this.post_now_date = post_now_date;
+        this.post_likeCount = post_likeCount;
+        this.post_likes = post_likes;
+        this.post_categories = post_categories;
     }
 
-    public String getPost_id() {
-        return post_id;
+    public String getPost_title() {
+        return post_title;
     }
 
-    public void setPost_id(String post_id) {
-        this.post_id = post_id;
+    public void setPost_title(String post_title) {
+        this.post_title = post_title;
     }
 
     public String getPost_content() {
@@ -43,51 +56,75 @@ public class Post {
         this.post_image = post_image;
     }
 
-    public String getUser_email() {
-        return user_email;
+    public String getPost_user_name() {
+        return post_user_name;
     }
 
-    public void setUser_email(String user_email) {
-        this.user_email = user_email;
+    public void setPost_user_name(String post_user_name) {
+        this.post_user_name = post_user_name;
     }
 
-    public Long getMin_temp() {
-        return min_temp;
+    public String getPost_min_temp() {
+        return post_min_temp;
     }
 
-    public void setMin_temp(Long min_temp) {
-        this.min_temp = min_temp;
+    public void setPost_min_temp(String post_min_temp) {
+        this.post_min_temp = post_min_temp;
     }
 
-    public Long getMax_temp() {
-        return max_temp;
+    public String getPost_max_temp() {
+        return post_max_temp;
     }
 
-    public void setMax_temp(Long max_temp) {
-        this.max_temp = max_temp;
+    public void setPost_max_temp(String post_max_temp) {
+        this.post_max_temp = post_max_temp;
     }
 
-    public int getLikeCount() {
-        return likeCount;
+    public String getPost_location() {
+        return post_location;
     }
 
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
+    public void setPost_location(String post_location) {
+        this.post_location = post_location;
     }
 
-    public HashMap<String, Boolean> getLikes() {
-        return likes;
+    public String getPost_date() {
+        return post_date;
     }
 
-    public void setLikes(HashMap<String, Boolean> likes) {
-        this.likes = likes;
+    public void setPost_date(String post_date) {
+        this.post_date = post_date;
     }
 
-    public ArrayList getCategoris() {
-        return categoris;
+    public String getPost_now_date() {
+        return post_now_date;
     }
 
-    public void setCategoris(ArrayList categoris) {
-        this.categoris = categoris;
+    public void setPost_now_date(String post_now_date) {
+        this.post_now_date = post_now_date;
+    }
+
+    public Long getPost_likeCount() {
+        return post_likeCount;
+    }
+
+    public void setPost_likeCount(Long post_likeCount) {
+        this.post_likeCount = post_likeCount;
+    }
+
+    public HashMap<String, Boolean> getPost_likes() {
+        return post_likes;
+    }
+
+    public void setPost_likes(HashMap<String, Boolean> post_likes) {
+        this.post_likes = post_likes;
+    }
+
+    public ArrayList<String> getPost_categories() {
+        return post_categories;
+    }
+
+    public void setPost_categories(ArrayList<String> post_categories) {
+        this.post_categories = post_categories;
     }
 }

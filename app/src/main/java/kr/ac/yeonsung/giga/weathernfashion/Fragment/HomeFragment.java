@@ -12,7 +12,6 @@ import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,10 +34,10 @@ import java.util.Date;
 
 import kr.ac.yeonsung.giga.weathernfashion.Activities.LoginActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.PostActivity;
-import kr.ac.yeonsung.giga.weathernfashion.Adapter.BoardRankAdapter;
+import kr.ac.yeonsung.giga.weathernfashion.Adapter.PostRankAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.DailyWeatherAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
-import kr.ac.yeonsung.giga.weathernfashion.VO.BoardRank;
+import kr.ac.yeonsung.giga.weathernfashion.VO.PostRank;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Weather;
 import kr.ac.yeonsung.giga.weathernfashion.methods.API;
 import kr.ac.yeonsung.giga.weathernfashion.methods.UserMethods;
@@ -78,13 +77,15 @@ public class HomeFragment extends Fragment {
     TextView weatherCode;
     String weatherCodeStr;
     ArrayList<Weather> list = new ArrayList();
-    ArrayList<BoardRank> rank_list = new ArrayList();
+    ArrayList<PostRank> rank_list = new ArrayList();
     String date2;
     DatabaseReference mDatabase;
     Calendar cal = Calendar.getInstance();
 
     DateFormat df_now = new SimpleDateFormat("HH");
-
+    public static HomeFragment newInstance() {
+        return new HomeFragment();
+    }
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -172,11 +173,11 @@ public class HomeFragment extends Fragment {
         go_to_post.setOnClickListener(btnListener);
         weather_icon.setOnClickListener(btnListener);
 
-        for(int i = 1; i<20; i++){
-            rank_list.add(new BoardRank(R.mipmap.ic_launcher_round,String.valueOf(i)));
+        for(int i = 1; i<9; i++){
+            rank_list.add(new PostRank(R.mipmap.ic_launcher_round,String.valueOf(i)));
             System.out.println(i);
         }
-        rank_adapter = new BoardRankAdapter(rank_list);
+        rank_adapter = new PostRankAdapter(rank_list);
         rank_recyclerView.setAdapter(rank_adapter);
 
 

@@ -12,14 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import kr.ac.yeonsung.giga.weathernfashion.R;
-import kr.ac.yeonsung.giga.weathernfashion.VO.BoardRank;
+import kr.ac.yeonsung.giga.weathernfashion.VO.PostRank;
 
-public class BoardRankAdapter extends RecyclerView.Adapter<BoardRankAdapter.ViewHolder> {
+public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHolder> {
 
-    private ArrayList<BoardRank> mData = null ;
+    private ArrayList<PostRank> mData = null ;
     private Context context;
 
-    public BoardRankAdapter(Context context, ArrayList<BoardRank> mData) {
+    public PostRankAdapter(Context context, ArrayList<PostRank> mData) {
         this.mData = mData;
         this.context = context;
     }
@@ -42,14 +42,14 @@ public class BoardRankAdapter extends RecyclerView.Adapter<BoardRankAdapter.View
     }
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
-    public BoardRankAdapter(ArrayList<BoardRank> list) {
+    public PostRankAdapter(ArrayList<PostRank> list) {
         mData = list ;
     }
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
     @Override
-    public BoardRankAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.board_rank_item, parent, false);
+    public PostRankAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_rank_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
 
         return holder ;
@@ -57,7 +57,7 @@ public class BoardRankAdapter extends RecyclerView.Adapter<BoardRankAdapter.View
 
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
-    public void onBindViewHolder(BoardRankAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(PostRankAdapter.ViewHolder holder, int position) {
         int image_int = mData.get(position).getImage();
         String rank_int = mData.get(position).getRank();
         holder.rank.setText(rank_int);

@@ -1,10 +1,10 @@
 package kr.ac.yeonsung.giga.weathernfashion.VO;
 
-public class BoardRank {
+public class PostRank {
     int image;
     String rank;
 
-    public BoardRank(int image, String rank) {
+    public PostRank(int image, String rank) {
         this.image = image;
         this.rank = rank;
     }

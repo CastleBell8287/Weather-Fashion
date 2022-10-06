@@ -4,18 +4,23 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -23,72 +28,134 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Categories;
+import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
+import kr.ac.yeonsung.giga.weathernfashion.methods.API;
 import kr.ac.yeonsung.giga.weathernfashion.methods.PostMethods;
 
 public class PostActivity extends AppCompatActivity {
-
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private DatabaseReference mDatabase;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private boolean valid = false;
-    private Float lat =0.1f ,lon = 1.2f;
+    private Float lat =0.1f , lon = 1.2f;
     Geocoder g;
-    private Uri imageUri;
-
+    private Uri imageUri = null;
+    StorageReference storageRef = storage.getReference();
+    API api = new API();
     PostMethods postMethods = new PostMethods();
-    TextView back_to_post_main,post_done,photo_weather,choice_post_categotis
-            ,choice_post_categotis2,post_selected_category;
+    TextView back_to_post_main,post_done,photo_weather,postlocation,postdate,choice_post_categotis
+            ,choice_post_categotis2,post_selected_category,mintemp,maxtemp;
     EditText post_title,post_main_text;
     ImageView post_img;
     List<String> mSelectedItems;
     AlertDialog.Builder builder;
+    String final_selection;
+    String attrLATITUDE;
+    String attrLATITUDE_REF;
+    String attrLONGITUDE;
+    String attrLONGITUDE_REF;
+    String attrDate;
+    String user_name;
+    ImageView imageView2;
+    String image_uri = null;
+    String image_str = null;
+    ArrayList<String> post_categories =new ArrayList<>();
+    @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         g = new Geocoder(this);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         setContentView(R.layout.activity_post);
         back_to_post_main = findViewById(R.id.back_to_post_main);
         post_done = findViewById(R.id.post_done);
         post_title = findViewById(R.id.post_title);
         post_main_text = findViewById(R.id.post_main_text);
+        mintemp = findViewById(R.id.image_mintemp);
+        maxtemp = findViewById(R.id.image_maxtemp);
         photo_weather = findViewById(R.id.photo_weather);
+        postlocation = findViewById(R.id.image_location);
+        postdate = findViewById(R.id.photo_weather3);
         choice_post_categotis = findViewById(R.id.choice_post_categoris);
         choice_post_categotis2 = findViewById(R.id.choice_post_categoris2);
         post_selected_category = findViewById(R.id.post_selected_category);
+        imageView2 = findViewById(R.id.imageView2);
         post_img = findViewById(R.id.post_img);
 
         //리스너 등록
 //        back_to_post_main.setOnClickListener(back_to);
         post_img.setOnClickListener(get_post_img);
 //        choice_post_categotis.setOnClickListener(choice_post_categoty);
-        choice_post_categotis.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog();
-            }
-        });
-    }
-//
-//    View.OnClickListener choice_post_categoty = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//            Intent intent1 = new Intent(getApplicationContext(), PopupActivity.class);
-//
-//            try{
-//                startActivityForResult(intent1,0);
-//            }catch (NullPointerException e){
-//                e.printStackTrace();
-//            }catch (RuntimeException e){
-//
+        choice_post_categotis.setOnClickListener(btn_listener);
+        getName();
+        post_done.setOnClickListener(btn_listener);
+
+
+
+//        UploadTask uploadTask = mountainsRef.putBytes(data);
+//        uploadTask.addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle unsuccessful uploads
 //            }
-//
-//
-//        }
-//    };
+//        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+//                // ...
+//            }
+//        });
+
+    }
+    View.OnClickListener btn_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.post_img:
+                    Intent galleryIntent = new Intent();
+                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    galleryIntent.setType("image/");
+                    activityResult.launch(galleryIntent);
+                    break;
+                case R.id.choice_post_categoris:
+                    showDialog();
+                    break;
+                case R.id.post_done:
+                    PostImage();
+                    setPost();
+                    break;
+            }
+        }
+    };
 
 
 
@@ -111,12 +178,13 @@ public class PostActivity extends AppCompatActivity {
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String final_selection = "";
+                final_selection = "";
                 for(String item : mSelectedItems){
                     final_selection = final_selection +" "+item;
                 }
                 Toast.makeText(getApplicationContext()," 선택 카테고리 "+ final_selection , Toast.LENGTH_SHORT).show();
                 post_selected_category.setText(final_selection);
+                getCategories();
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -127,7 +195,6 @@ public class PostActivity extends AppCompatActivity {
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
     }
 
 
@@ -184,7 +251,7 @@ public class PostActivity extends AppCompatActivity {
                     if(result.getResultCode()== RESULT_OK && result.getData() != null){
                         imageUri = result.getData().getData();
                         post_img.setImageURI(imageUri);
-
+                        System.out.println("이미지 : " +imageUri);
                         try {
                             ExifInterface exif = new ExifInterface(getRealPathFromURI(imageUri));
                             showExif(exif);
@@ -200,11 +267,11 @@ public class PostActivity extends AppCompatActivity {
     // 사진 갤러리에서 선택
 
     private void showExif(ExifInterface exif) {
-        String attrLATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-        String attrLATITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-        String attrLONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-        String attrLONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-        String attrDate =exif.getAttribute(ExifInterface.TAG_DATETIME);
+        attrLATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+        attrLATITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+        attrLONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+        attrLONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+        attrDate =exif.getAttribute(ExifInterface.TAG_DATETIME);
 
         if((attrLATITUDE!=null)&&(attrLATITUDE_REF!=null)&&(attrLONGITUDE!=null) &&(attrLONGITUDE_REF!=null)){
             valid=true;
@@ -222,6 +289,7 @@ public class PostActivity extends AppCompatActivity {
             }
         }
         photo_weather.setText(lat+" , "+lon+"\n"+attrDate);
+        postMethods.getWeatherNow_post(PostActivity.this, lat, lon, attrDate,photo_weather,mintemp,maxtemp, postdate);
     }
 
     private String getRealPathFromURI(Uri uri){
@@ -281,17 +349,140 @@ public class PostActivity extends AppCompatActivity {
         }
         if(address!=null){
             if(address.size()==0){
-                System.out.println(getLatitude()+"시팔");
-                System.out.println(getLongitude()+"시팔");
                 Log.d("test", "주소찾기 오류");
             }else{
                 Log.d("찾은 주소",address.get(0).getAddressLine(0));
                 System.out.println(address.get(0).getAddressLine(0)+"주소");
+                String s = address.get(0).getAddressLine(0);
+                String location = s.substring(s.indexOf(" "));
+                location = location.substring(0,location.lastIndexOf(" "));
+                location = location.substring(0,location.lastIndexOf(" "));
+                postlocation.setText(location);
+                postlocation.setVisibility(View.VISIBLE);
                 return address.get(0).getAddressLine(0);
             }
         }
         return null;
     }
+public void PostImage(){
+    Uri file = imageUri;
+    System.out.println("tt : "+image_uri);
+  try {
+      image_str = String.valueOf(imageUri).substring(String.valueOf(imageUri).lastIndexOf("/") + 1);
+          System.out.println("image_str: " + image_str);
+          StorageReference riversRef = storageRef.child("post");
+          StorageReference riversRef2 = riversRef.child(file.getLastPathSegment());
+          UploadTask uploadTask = riversRef2.putFile(file);
+          image_uri = image_str;
+// Register observers to listen for when the download is done or if it fails
+          uploadTask.addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception exception) {
+                  // Handle unsuccessful uploads
+              }
+          }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+              @Override
+              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                  // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                  // ...
+              }
+          });
+
+  } catch (NullPointerException e){
+      e.printStackTrace();
+    }
+//    riversRef.child(image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//        @Override
+//        public void onSuccess(Uri uri) {
+//
+//            System.out.println("uri : "+uri);
+//            Glide.with(PostActivity.this /* context */)
+//                    .load(uri)
+//                    .into(imageView2);
+//        }
+//    }).addOnFailureListener(new OnFailureListener() {
+//        @Override
+//        public void onFailure(@NonNull Exception exception) {
+//            // Handle any errors
+//        }
+//    });
 
 
+// Download directly from StorageReference using Glide
+// (See MyAppGlideModule for Loader registration)
+
+
+}
+
+
+public void getName() {
+        mDatabase.child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1 : snapshot.getChildren()){
+                    if(snapshot1.child("user_email").getValue().toString().equals(user.getEmail())){
+                        user_name = snapshot1.child("user_name").getValue().toString();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+}
+
+public void setPost(){
+    Date date = new Date();
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    System.out.println("카테 : "+post_categories);
+    boolean b = TextUtils.isEmpty(image_uri);
+    System.out.println("불린 : "+b);
+    if(post_title.getText().length()==0){
+        api.getToast(this,"제목을 입력해주세요.");
+    }else if(post_main_text.getText().length()==0){
+        api.getToast(this,"내용을 입력해주세요.");
+    }else if(b){
+        api.getToast(this,"이미지를 업로드해주세요.");
+    }else if(post_categories.size() == 0){
+        api.getToast(this,"카테고리를 선택해주세요.");
+    }else {
+
+        System.out.println("이미지  : " + image_str);
+
+        String h = postdate.getText().toString().replace(" ","");
+        h = h.replace("-","");
+        h = h.replace(":","");
+
+
+        String title = post_title.getText().toString();
+        String content = post_main_text.getText().toString();
+        String image = image_uri;
+        String user_name_str = user_name;
+        String post_min_temp = mintemp.getText().toString();
+        String post_max_temp = maxtemp.getText().toString();
+        String location = postlocation.getText().toString();
+        String post_date = h;
+        String now_date = sdf.format(date);
+        Long post_likeCount = 0L;
+        HashMap<String, Boolean> post_likes = null;
+
+        Post post = new Post(title, content, image, user_name_str, post_min_temp, post_max_temp, location
+                , post_date, now_date, post_likeCount, post_likes, post_categories);
+        mDatabase.child("post").push().setValue(post);
+
+        api.getToast(this,"업로드 성공");
+        Intent intent =new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+}
+public void getCategories(){
+    String [] str = final_selection.trim().split(" ");
+    post_categories.clear();
+    for(int j = 0; j<str.length; j++){
+        post_categories.add(str[j]);
+    }
+}
 }

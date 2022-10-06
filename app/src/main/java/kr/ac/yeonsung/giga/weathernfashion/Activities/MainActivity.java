@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import kr.ac.yeonsung.giga.weathernfashion.Fragment.BoardFragment;
+import kr.ac.yeonsung.giga.weathernfashion.Fragment.PostFragment;
 import kr.ac.yeonsung.giga.weathernfashion.Fragment.HomeFragment;
 import kr.ac.yeonsung.giga.weathernfashion.Fragment.MyInfoFragment;
 import kr.ac.yeonsung.giga.weathernfashion.R;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case R.id.tab_board: {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_ly, new BoardFragment())
+                            .replace(R.id.main_ly, new PostFragment())
                             .commit();
                     return true;
                 }
