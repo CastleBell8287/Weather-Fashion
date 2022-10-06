@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import kr.ac.yeonsung.giga.weathernfashion.R;
@@ -58,6 +60,9 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(PostRankAdapter.ViewHolder holder, int position) {
+//        Glide.with(holder.itemView)
+//                .load(arrayList.get(position).getRoom_image())
+//                .into(holder.room_image);
         int image_int = mData.get(position).getImage();
         String rank_int = mData.get(position).getRank();
         holder.rank.setText(rank_int);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,10 +20,12 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
@@ -174,11 +177,10 @@ public class HomeFragment extends Fragment {
         weather_icon.setOnClickListener(btnListener);
 
         for(int i = 1; i<9; i++){
-            rank_list.add(new PostRank(R.mipmap.ic_launcher_round,String.valueOf(i)));
+
             System.out.println(i);
         }
-        rank_adapter = new PostRankAdapter(rank_list);
-        rank_recyclerView.setAdapter(rank_adapter);
+
 
 
 
@@ -194,9 +196,9 @@ public class HomeFragment extends Fragment {
                         public void run() {
                             try {
                                 //받아온 TimeDate객체 배열을 Adapter에 넣어주면 끄읕
-                                adapter = new DailyWeatherAdapter(list);
-                                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false)) ;
-                                recyclerView.setAdapter(adapter);
+//                                adapter = new DailyWeatherAdapter(list);
+//                                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false)) ;
+//                                recyclerView.setAdapter(adapter);
                                 api.getMyAddress(si,gu,dong);
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -219,6 +221,7 @@ public class HomeFragment extends Fragment {
     public void setCode(){
         weatherCodeStr = weatherCode.getText().toString();
         getDailyWeather();
+        getPostRank();
     }
 
     // 버튼 리스너 (로그아웃, 위치 날씨 설정)
@@ -255,6 +258,45 @@ public class HomeFragment extends Fragment {
             }
         }
     };
+    public void getPostRank(){
+        mDatabase.child("post").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot document : snapshot.getChildren()){
+                    Query myTopPostsQuery = mDatabase.child("post").orderByChild("post_likeCount");
+                    myTopPostsQuery.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot document : snapshot.getChildren()) {
+                                System.out.println(document.getValue());
+                                String postTitle = document.child("post_title").getValue().toString();
+                                String postImage = document.child("post_image").getValue().toString();
+                                PostRank postRank = new PostRank(R.mipmap.ic_launcher,postTitle);
+                                rank_list.add(postRank);
+                                System.out.println(document.child("post_title").getValue());
+                            }
+                            rank_adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                    rank_adapter = new PostRankAdapter(rank_list);
+                    rank_recyclerView.setAdapter(rank_adapter);
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
     public void getDailyWeather(){
         mDatabase.child("weather").child(date2).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
