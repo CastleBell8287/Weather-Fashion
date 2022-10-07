@@ -31,6 +31,9 @@ public class Post {
         this.post_likes = post_likes;
         this.post_categories = post_categories;
     }
+    public Post(){
+
+    }
 
     public String getPost_title() {
         return post_title;

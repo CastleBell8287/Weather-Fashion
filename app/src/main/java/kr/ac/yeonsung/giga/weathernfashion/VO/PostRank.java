@@ -1,19 +1,19 @@
 package kr.ac.yeonsung.giga.weathernfashion.VO;
 
 public class PostRank {
-    int image;
+    String image;
     String rank;
 
-    public PostRank(int image, String rank) {
+    public PostRank(String image, String rank) {
         this.image = image;
         this.rank = rank;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
