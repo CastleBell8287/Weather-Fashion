@@ -1,15 +1,21 @@
 package kr.ac.yeonsung.giga.weathernfashion.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -20,6 +26,9 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
 
     private ArrayList<PostRank> mData = null ;
     private Context context;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+    StorageReference riversRef = storageRef.child("post");
 
     public PostRankAdapter(Context context, ArrayList<PostRank> mData) {
         this.mData = mData;
@@ -60,28 +69,38 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(PostRankAdapter.ViewHolder holder, int position) {
-//        Glide.with(holder.itemView)
-//                .load(arrayList.get(position).getRoom_image())
-//                .into(holder.room_image);
-        int image_int = mData.get(position).getImage();
+
+        String image_str = mData.get(position).getImage();
         String rank_int = mData.get(position).getRank();
+        riversRef.child(image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(context).load(uri)
+                        .into(holder.imageView);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+            }
+        });
         holder.rank.setText(rank_int);
         if(holder.rank.getText().equals("1")) {
-            holder.imageView.setImageResource(image_int);
+//            holder.imageView.setImageResource(image_int);
             holder.rank_icon.setImageResource(R.drawable.rank1);
             System.out.println(holder.rank.getText());
         }
         if(holder.rank.getText().equals("2")) {
-            holder.imageView.setImageResource(image_int);
+//            holder.imageView.setImageResource(image_int);
             holder.rank_icon.setImageResource(R.drawable.rank2);
             System.out.println(holder.rank.getText());
         }
         if(holder.rank.getText().equals("3")) {
-            holder.imageView.setImageResource(image_int);
+//            holder.imageView.setImageResource(image_int);
             holder.rank_icon.setImageResource(R.drawable.rank3);
             System.out.println(holder.rank.getText());
         } else{
-            holder.imageView.setImageResource(image_int);
+//            holder.imageView.setImageResource(image_int);
         }
     }
     // getItemCount() - 전체 데이터 갯수 리턴.

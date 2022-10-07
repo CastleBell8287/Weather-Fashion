@@ -23,10 +23,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -38,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import kr.ac.yeonsung.giga.weathernfashion.R;
+import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +49,7 @@ import kr.ac.yeonsung.giga.weathernfashion.R;
  * create an instance of this fragment.
  */
 public class PostViewFragment extends Fragment {
-
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("post");
@@ -118,7 +122,6 @@ public class PostViewFragment extends Fragment {
         view_image = view.findViewById(R.id.view_image);
         Bundle bundle = getArguments();
         id = bundle.getString("id");
-        like();
         mDatabase.child("post").child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -162,6 +165,13 @@ public class PostViewFragment extends Fragment {
 
             }
         });
+        like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("id :" + id);
+                onLikeClicked(mDatabase.child("post").child(id));
+            }
+        });
 
     }
 
@@ -175,23 +185,42 @@ public class PostViewFragment extends Fragment {
             }
         }
     };
+    private void onLikeClicked(DatabaseReference postRef) {
+        postRef.runTransaction(new Transaction.Handler() {
 
-    public void like(){
-        like.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                mDatabase.child("post").child(id).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Post postVo = mutableData.getValue(Post.class);
+                if (postVo == null) {
+                    return Transaction.success(mutableData);
+                }
 
-                    }
+                //좋아요 누른 사람을 확인
+                if (postVo.getPost_likes().containsKey(mAuth.getCurrentUser().getUid()))
+                {
+                    // Unstar the post and remove self from stars
+                    //좋아요 취소
+                    postVo.setPost_likeCount(postVo.getPost_likeCount() - 1);
+                    postVo.getPost_likes().remove(mAuth.getCurrentUser().getUid());
+                } else {
+                    // Star the post and add self to stars
+                    //좋아요 증가
+                    postVo.setPost_likeCount(postVo.getPost_likeCount() + 1);
+                    postVo.getPost_likes().put(mAuth.getCurrentUser().getUid(), true);
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                // Set value and report transaction success
+                System.out.println(postVo);
+                mutableData.setValue(postVo);
+                return Transaction.success(mutableData);
+            }
 
-                    }
-                });
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean committed,
+                                   DataSnapshot currentData) {
+                // Transaction completed
             }
         });
     }
+
 }

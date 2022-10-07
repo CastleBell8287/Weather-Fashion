@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 import kr.ac.yeonsung.giga.weathernfashion.Activities.LoginActivity;
@@ -267,14 +268,16 @@ public class HomeFragment extends Fragment {
                     myTopPostsQuery.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            rank_list.clear();
                             for (DataSnapshot document : snapshot.getChildren()) {
                                 System.out.println(document.getValue());
                                 String postTitle = document.child("post_title").getValue().toString();
                                 String postImage = document.child("post_image").getValue().toString();
-                                PostRank postRank = new PostRank(R.mipmap.ic_launcher,postTitle);
+                                PostRank postRank = new PostRank(postImage,postTitle);
                                 rank_list.add(postRank);
                                 System.out.println(document.child("post_title").getValue());
                             }
+                            Collections.reverse(rank_list);
                             rank_adapter.notifyDataSetChanged();
                         }
 
@@ -283,7 +286,7 @@ public class HomeFragment extends Fragment {
 
                         }
                     });
-                    rank_adapter = new PostRankAdapter(rank_list);
+                    rank_adapter = new PostRankAdapter(getContext(), rank_list);
                     rank_recyclerView.setAdapter(rank_adapter);
                 }
 
