@@ -1,13 +1,19 @@
 package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
+import kr.ac.yeonsung.giga.weathernfashion.Adapter.GridViewAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 
 /**
@@ -15,7 +21,11 @@ import kr.ac.yeonsung.giga.weathernfashion.R;
  * Use the {@link MyInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
 public class MyInfoFragment extends Fragment {
+
+    String[] names = {"image1","image2","image3"};
+    int[] images = {R.mipmap.ic_launcher,R.mipmap.ic_launcher,R.mipmap.ic_launcher};
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,9 +71,15 @@ public class MyInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_myinfo, container, false);
 
+        Context ct = container.getContext();
+
+        GridView gridView = rootView.findViewById(R.id.gridView);
+        GridViewAdapter adapter = new GridViewAdapter(names,images,ct);
+        gridView.setAdapter(adapter);
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_myinfo, container, false);
+        return rootView;
     }
 }
