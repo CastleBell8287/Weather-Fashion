@@ -27,6 +27,7 @@ import kr.ac.yeonsung.giga.weathernfashion.VO.User;
 
 public class UserMethods extends Activity{
     List<String> hash = new ArrayList<>();
+    FirebaseUser user;
     FirebaseAuth mAuth;
     API api = new API();
     Boolean result;
@@ -53,9 +54,9 @@ public class UserMethods extends Activity{
                                     if (hash.contains(email)){
                                         api.getToast(activity,"이미 존재하는 이메일입니다.");
                                     }else {
-                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        user = mAuth.getCurrentUser();
                                         Toast.makeText(activity, "성공", Toast.LENGTH_SHORT).show();
-                                        join_user(email,passwd,name,phone,styles,activity);
+                                        join_user(user.getUid(),email,passwd,name,phone,styles,activity);
                                         mystartActivity(activity, LoginActivity.class);
                                     }
                                 }
@@ -75,19 +76,20 @@ public class UserMethods extends Activity{
                 });
     }
 
-    public void join_user(String email, String passwd, String name, String phone, List<String> styles, Activity activity){
+    public void join_user(String uid, String email, String passwd, String name, String phone, List<String> styles, Activity activity){
         DatabaseReference mDatabase;
 
         long now = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
         Date date = new Date(now);
         String reg_date = sdf.format(date);
-
-        User user = new User(email, passwd, name, phone, styles, reg_date);
+        String usercomment = "";
+        String userprofile = "basic.png";
+        User user = new User(email, passwd, name, phone, styles, reg_date,usercomment,userprofile);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mDatabase.child("users").push().setValue(user);
+        mDatabase.child("users").child(uid).setValue(user);
     }
 
     public Boolean email_check(String email){

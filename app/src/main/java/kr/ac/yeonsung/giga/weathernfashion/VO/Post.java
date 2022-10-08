@@ -12,12 +12,13 @@ public class Post {
     private String post_max_temp;
     private String post_location;
     private String post_date;
+    private String post_user_id;
     private String post_now_date;
     private Long post_likeCount;
     private HashMap<String, Boolean> post_likes = new HashMap<>();
     private ArrayList<String> post_categories;
 
-    public Post(String post_title, String post_content, String post_image, String post_user_name, String post_min_temp, String post_max_temp, String post_location, String post_date, String post_now_date, Long post_likeCount, HashMap<String, Boolean> post_likes, ArrayList<String> post_categories) {
+    public Post(String post_title, String post_content, String post_image, String post_user_name, String post_min_temp, String post_max_temp, String post_location, String post_date, String post_now_date, Long post_likeCount, HashMap<String, Boolean> post_likes, ArrayList<String> post_categories,String post_user_id) {
         this.post_title = post_title;
         this.post_content = post_content;
         this.post_image = post_image;
@@ -30,9 +31,18 @@ public class Post {
         this.post_likeCount = post_likeCount;
         this.post_likes = post_likes;
         this.post_categories = post_categories;
+        this.post_user_id = post_user_id;
     }
     public Post(){
 
+    }
+
+    public String getPost_user_id() {
+        return post_user_id;
+    }
+
+    public void setPost_user_id(String post_user_id) {
+        this.post_user_id = post_user_id;
     }
 
     public String getPost_title() {

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,10 +21,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.PostListAdapter;
+import kr.ac.yeonsung.giga.weathernfashion.Adapter.UserListAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.PostList;
+import kr.ac.yeonsung.giga.weathernfashion.VO.UserList;
 import kr.ac.yeonsung.giga.weathernfashion.methods.API;
 
 /**
@@ -41,7 +43,7 @@ public class PostFragment extends Fragment {
     GridLayoutManager layoutManager;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     AutoCompleteTextView autoCompleteTextView;
-    ArrayList<String> user_name = new ArrayList<>();
+    ArrayList<UserList> user_list = new ArrayList<>();
     String name;
     API api = new API();
     // TODO: Rename parameter arguments, choose names that match
@@ -97,13 +99,13 @@ public class PostFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        user_name_set();
         recyclerView = view.findViewById(R.id.grid_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(layoutManager);
-
         autoCompleteTextView = view.findViewById(R.id.autoDatas);
-        user_name_set();
+
         getPostList();
 
     }
@@ -113,7 +115,12 @@ public class PostFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
-                    user_name.add(snapshot1.child("user_name").getValue().toString());
+                    String name_str = snapshot1.child("user_name").getValue().toString();
+                    String id_str = snapshot1.getKey();
+                    String profile_str = snapshot1.child("user_profile").getValue().toString();
+                    user_list.add(new UserList(id_str,name_str,profile_str));
+                    UserListAdapter userListAdapter = new UserListAdapter(getActivity(), user_list);
+                    autoCompleteTextView.setAdapter(userListAdapter);
                 }
             }
 
@@ -122,10 +129,6 @@ public class PostFragment extends Fragment {
 
             }
         });
-        autoCompleteTextView.setAdapter(
-                new ArrayAdapter<String>(getActivity()
-                        ,android.R.layout.simple_dropdown_item_1line
-                        ,user_name));
     }
 
     public void getPostList(){
@@ -138,10 +141,10 @@ public class PostFragment extends Fragment {
                     System.out.println("post_image : "+snapshot1.child("post_image").getValue().toString());
                     System.out.println("post_id : "+snapshot1.getKey());
                 }
+                Collections.reverse(list);
                 adapter = new PostListAdapter(getContext(),list);
                 recyclerView.setAdapter(adapter);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 

@@ -468,9 +468,9 @@ public void setPost(){
         String now_date = sdf.format(date);
         Long post_likeCount = 0L;
         HashMap<String, Boolean> post_likes = null;
-
+        String postuserid = user.getUid();
         Post post = new Post(title, content, image, user_name_str, post_min_temp, post_max_temp, location
-                , post_date, now_date, post_likeCount, post_likes, post_categories);
+                , post_date, now_date, post_likeCount, post_likes, post_categories, postuserid);
         mDatabase.child("post").push().setValue(post);
 
         api.getToast(this,"업로드 성공");

@@ -66,6 +66,7 @@ public class HomeFragment extends Fragment {
     RecyclerView.Adapter rank_adapter;
     RecyclerView rank_recyclerView;
     String dateNow;
+
     DateFormat df = new SimpleDateFormat("yyyyMMdd");
     TextView nowTemp; //현재 온도
     TextView nowWeather; //현재 날씨
@@ -82,6 +83,7 @@ public class HomeFragment extends Fragment {
     String weatherCodeStr;
     ArrayList<Weather> list = new ArrayList();
     ArrayList<PostRank> rank_list = new ArrayList();
+    String date3;
     String date2;
     DatabaseReference mDatabase;
     Calendar cal = Calendar.getInstance();
@@ -144,8 +146,9 @@ public class HomeFragment extends Fragment {
         Button logout = view.findViewById(R.id.logout_btn);
         Button go_to_post = view.findViewById(R.id.go_to_post);
         cal.setTime(new Date());
-        date2 = df.format(cal.getTime()) ;
+        date2 = df.format(cal.getTime());
         cal.setTime(new Date());
+        date3 = df.format(cal.getTime());
         dateNow = df_now.format(cal.getTime()) ;
         System.out.println("현재시간 " +dateNow);
         weather_icon = view.findViewById(R.id.weather_icon);
@@ -270,13 +273,17 @@ public class HomeFragment extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             rank_list.clear();
                             for (DataSnapshot document : snapshot.getChildren()) {
-                                System.out.println(document.getValue());
-                                String postTitle = document.child("post_title").getValue().toString();
-                                String postImage = document.child("post_image").getValue().toString();
-                                PostRank postRank = new PostRank(postImage,postTitle);
-                                rank_list.add(postRank);
-                                System.out.println(document.child("post_title").getValue());
-                            }
+                                if (Long.parseLong(document.child("post_now_date").getValue().toString())>=Long.parseLong(date3+"000000")
+                                        && Long.parseLong(document.child("post_now_date").getValue().toString())<=Long.parseLong(date3+"999999")
+                                ) {
+                                    System.out.println(document.getValue());
+                                    String postTitle = document.child("post_title").getValue().toString();
+                                    String postImage = document.child("post_image").getValue().toString();
+                                    PostRank postRank = new PostRank(postImage, postTitle);
+                                    rank_list.add(postRank);
+                                    System.out.println(document.child("post_title").getValue());
+                                }
+                                }
                             Collections.reverse(rank_list);
                             rank_adapter.notifyDataSetChanged();
                         }

@@ -17,6 +17,8 @@
              android:id="@+id/autoDatas"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
+             android:completionThreshold="1"
+             android:hint="이름을 입력하세요."
              />
      </LinearLayout>
      <LinearLayout

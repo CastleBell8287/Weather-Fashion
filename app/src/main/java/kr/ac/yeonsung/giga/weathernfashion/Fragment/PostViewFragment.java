@@ -13,7 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import kr.ac.yeonsung.giga.weathernfashion.Adapter.CategoryAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
 
@@ -50,10 +55,16 @@ import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
  */
 public class PostViewFragment extends Fragment {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("post");
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    RecyclerView.Adapter adapter_list;
+    RecyclerView recyclerView;
+    ArrayList<String> category_list = new ArrayList<>();
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
+    HashMap<String,Boolean> hash = new HashMap<>();
     String id;
     TextView view_user_name,view_title,view_maxtemp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
     ImageView view_image,like;
@@ -109,6 +120,7 @@ public class PostViewFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        recyclerView = view.findViewById(R.id.recyclerView);
         view_user_name = view.findViewById(R.id.view_user_name);
         view_title = view.findViewById(R.id.view_title);
         view_maxtemp = view.findViewById(R.id.view_maxtemp);
@@ -120,11 +132,53 @@ public class PostViewFragment extends Fragment {
         view_now_date = view.findViewById(R.id.view_now_date);
         view_content = view.findViewById(R.id.view_content);
         view_image = view.findViewById(R.id.view_image);
+
+        recyclerView.setLayoutManager(layoutManager);
         Bundle bundle = getArguments();
         id = bundle.getString("id");
+
+
+
+
+
+        //좋아요 버튼 활성화 체크
+        mDatabase.child("post").child(id).child("post_likes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null){
+                    hash.clear();
+                hash = (HashMap<String, Boolean>) snapshot.getValue();
+                System.out.println("좋아요 누른 사람들 :" + hash);
+
+                if (hash.containsKey(user.getUid())) {
+                    System.out.println("해쉬에 내 유저 아이디가 있으면" + hash.containsKey(user.getUid()));
+                    if (hash.get(user.getUid()) == true) {
+                        like.setImageResource(R.drawable.thumb_up);
+                        System.out.println("내 아이디의 값이 true면 : " + hash.get(user.getUid()));
+                    } else {
+                        like.setImageResource(R.drawable.ic_baseline_thumb_up_24);
+                        System.out.println("내 아이디의 값이 false면 : " + hash.get(user.getUid()));
+                    }
+                } else {
+                    System.out.println("해쉬에 내 유저 아이디가 없으면" + hash.containsKey(user.getUid()));
+                    like.setImageResource(R.drawable.ic_baseline_thumb_up_24);
+                }
+            }else{
+                    System.out.println("파이어베이스에 좋아요 누른 사람이 한명도 없으면" + hash.containsKey(user.getUid()));
+                    like.setImageResource(R.drawable.ic_baseline_thumb_up_24); 
+                }
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        //세팅
         mDatabase.child("post").child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                category_list.clear();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date = null;
@@ -141,6 +195,13 @@ public class PostViewFragment extends Fragment {
                     likecount.setText(snapshot.child("post_likeCount").getValue().toString());
                     view_date.setText(sdf2.format(date));
                     view_now_date.setText(sdf2.format(date2));
+
+                    category_list = (ArrayList<String>) snapshot.child("post_categories").getValue();
+                    System.out.println(category_list);
+                    adapter_list = new CategoryAdapter(getContext(),category_list);
+                    recyclerView.setAdapter(adapter_list);
+                    adapter_list.notifyDataSetChanged();
+
                     view_content.setText(snapshot.child("post_content").getValue().toString());
                     riversRef.child(snapshot.child("post_image").getValue().toString()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
@@ -175,16 +236,7 @@ public class PostViewFragment extends Fragment {
 
     }
 
-    View.OnClickListener btnListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()){
-                case R.id.like:
 
-                    break;
-            }
-        }
-    };
     private void onLikeClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {
 

@@ -29,46 +29,47 @@ import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Fragment.PostFragment;
 import kr.ac.yeonsung.giga.weathernfashion.Fragment.PostViewFragment;
 import kr.ac.yeonsung.giga.weathernfashion.R;
+import kr.ac.yeonsung.giga.weathernfashion.VO.MyInfoList;
 import kr.ac.yeonsung.giga.weathernfashion.VO.PostList;
 
-public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHolder>{
+public class MyInfoAdapter extends RecyclerView.Adapter<MyInfoAdapter.ViewHolder>{
 
-    private ArrayList<PostList> mData = null ;
+    private ArrayList<MyInfoList> mData = null ;
     private Context context;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("post");
 
-    public PostListAdapter(Context context, ArrayList<PostList> mData) {
+    public MyInfoAdapter(Context context, ArrayList<MyInfoList> mData) {
         this.mData = mData;
         this.context = context;
     }
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView post_id ;
-        ImageView post_image;
+        TextView myinfo_id ;
+        ImageView myinfo_image;
 
 
         public ViewHolder(View itemView) {
             super(itemView) ;
 
             // 뷰 객체에 대한 참조. (hold strong reference)
-            post_id = itemView.findViewById(R.id.post_id);
-            post_image = itemView.findViewById(R.id.post_image);
+           myinfo_id = itemView.findViewById(R.id.mypost_id);
+           myinfo_image = itemView.findViewById(R.id.mypost_image);
 
         }
     }
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
-    public PostListAdapter(ArrayList<PostList> list) {
+    public MyInfoAdapter(ArrayList<MyInfoList> list) {
         mData = list ;
     }
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
     @Override
-    public PostListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list_item, parent, false);
+    public MyInfoAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.myinfo_post_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
 
         return holder ;
@@ -76,29 +77,28 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
 
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
-    public void onBindViewHolder(PostListAdapter.ViewHolder holder, int position) {
-        String post_image_str = mData.get(position).getPost_image();
-        String post_id = mData.get(position).getPost_id();
+    public void onBindViewHolder(MyInfoAdapter.ViewHolder holder, int position) {
+        String myinfo_image_str = mData.get(position).getPost_image();
+        String myinfo_id = mData.get(position).getPost_id();
 
-        System.out.println("asdasd : "+post_image_str);
-        System.out.println("asdasd : "+post_id);
-    riversRef.child(post_image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-        @Override
-        public void onSuccess(Uri uri) {
-            Glide.with(context).load(uri)
-                    .into(holder.post_image);
-        }
-    }).addOnFailureListener(new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception exception) {
-        }
-    });
-        holder.post_id.setText(post_id);
-        holder.post_image.setOnClickListener(new View.OnClickListener() {
+        riversRef.child(myinfo_image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(context).load(uri)
+                        .into(holder.myinfo_image);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+            }
+        });
+        holder.myinfo_id.setText(myinfo_id);
+        holder.myinfo_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle result = new Bundle();
-                result.putString("id", post_id);
+                result.putString("id", myinfo_id);
                 FragmentManager fm = ((MainActivity)context).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction;
                 PostViewFragment postViewFragment = new PostViewFragment();
