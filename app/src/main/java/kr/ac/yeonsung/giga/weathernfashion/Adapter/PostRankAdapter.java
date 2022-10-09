@@ -18,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.PostRank;
@@ -25,6 +26,8 @@ import kr.ac.yeonsung.giga.weathernfashion.VO.PostRank;
 public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHolder> {
 
     private ArrayList<PostRank> mData = null ;
+
+
     private Context context;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
@@ -71,36 +74,34 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
     public void onBindViewHolder(PostRankAdapter.ViewHolder holder, int position) {
 
         String image_str = mData.get(position).getImage();
-        String rank_int = mData.get(position).getRank();
+
+
+        holder.rank.setText(String.valueOf(position+1));
+
         riversRef.child(image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Glide.with(context).load(uri)
                         .into(holder.imageView);
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
             }
         });
-        holder.rank.setText(rank_int);
+
         if(holder.rank.getText().equals("1")) {
-//            holder.imageView.setImageResource(image_int);
             holder.rank_icon.setImageResource(R.drawable.rank1);
             System.out.println(holder.rank.getText());
         }
         if(holder.rank.getText().equals("2")) {
-//            holder.imageView.setImageResource(image_int);
             holder.rank_icon.setImageResource(R.drawable.rank2);
             System.out.println(holder.rank.getText());
         }
         if(holder.rank.getText().equals("3")) {
-//            holder.imageView.setImageResource(image_int);
             holder.rank_icon.setImageResource(R.drawable.rank3);
             System.out.println(holder.rank.getText());
         } else{
-//            holder.imageView.setImageResource(image_int);
         }
     }
     // getItemCount() - 전체 데이터 갯수 리턴.
