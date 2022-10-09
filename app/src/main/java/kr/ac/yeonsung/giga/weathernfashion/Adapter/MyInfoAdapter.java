@@ -104,8 +104,10 @@ public class MyInfoAdapter extends RecyclerView.Adapter<MyInfoAdapter.ViewHolder
                 PostViewFragment postViewFragment = new PostViewFragment();
                 postViewFragment.setArguments(result);
                 fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.main_ly,postViewFragment);
-                fragmentTransaction.commit();
+                fragmentTransaction.addToBackStack(null)
+                        .setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
+                        .replace(R.id.main_ly,postViewFragment)
+                        .commit();
 
             }
         });
