@@ -75,7 +75,6 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
 
         String image_str = mData.get(position).getImage();
 
-
         holder.rank.setText(String.valueOf(position+1));
 
         riversRef.child(image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
