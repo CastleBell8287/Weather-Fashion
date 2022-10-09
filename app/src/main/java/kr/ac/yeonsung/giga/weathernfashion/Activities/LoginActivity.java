@@ -1,5 +1,6 @@
 package kr.ac.yeonsung.giga.weathernfashion.Activities;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 import android.app.Activity;
@@ -124,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
     public void mystartActivity(Class c){
         Intent intent = new Intent(LoginActivity.this,c);
         startActivity(intent);
+        intent.addFlags(FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
     }
 }

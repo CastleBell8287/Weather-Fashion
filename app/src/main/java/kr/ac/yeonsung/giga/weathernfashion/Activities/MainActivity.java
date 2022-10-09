@@ -1,13 +1,19 @@
 package kr.ac.yeonsung.giga.weathernfashion.Activities;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.SurfaceControl;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.List;
 
 import kr.ac.yeonsung.giga.weathernfashion.Fragment.PostFragment;
 import kr.ac.yeonsung.giga.weathernfashion.Fragment.HomeFragment;
@@ -28,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
         //맨 처음 시작할 탭 설정
         bottom_nav.setSelectedItemId(R.id.tab_home);
-
     }
 
 
@@ -48,18 +53,23 @@ public class MainActivity extends AppCompatActivity {
             switch (menuItem.getItemId()) {
                 case R.id.tab_home: {
                     getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                             .replace(R.id.main_ly, new HomeFragment())
                             .commit();
                     return true;
                 }
                 case R.id.tab_board: {
                     getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                            .addToBackStack(null)
                             .replace(R.id.main_ly, new PostFragment())
                             .commit();
                     return true;
                 }
                 case R.id.tab_myinfo: {
                     getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                            .addToBackStack(null)
                             .replace(R.id.main_ly, new MyInfoFragment())
                             .commit();
                     return true;
@@ -69,4 +79,5 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+
 }

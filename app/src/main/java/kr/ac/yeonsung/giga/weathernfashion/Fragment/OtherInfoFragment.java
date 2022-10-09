@@ -100,6 +100,7 @@ public class OtherInfoFragment extends Fragment {
         ViewGroup view = (ViewGroup)inflater.inflate(R.layout.fragment_other_info, container, false);
         Bundle bundle = getArguments();
         id = bundle.getString("id");
+        System.out.println("아이디 : "+ id);
         othername = view.findViewById(R.id.other_name);
         othercomment = view.findViewById(R.id.other_comment);
         otherprofile = view.findViewById(R.id.other_profile);

@@ -64,11 +64,8 @@ public class UserListAdapter extends ArrayAdapter<UserList> {
 
         if (userlist != null) {
             String name_str = userlist.getUser_name();
-            System.out.println("네임 : "+name_str);
             id_str = userlist.getUser_id();
-            System.out.println("아디 : "+id_str);
             String profile_str = userlist.getUser_profile();
-            System.out.println("사진 : "+profile_str);
             name.setText(name_str);
             id.setText(id_str);
             riversRef.child(profile_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -83,22 +80,6 @@ public class UserListAdapter extends ArrayAdapter<UserList> {
                 }
             });
         }
-        name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println(id_str + name.getText().toString());
-                Bundle result = new Bundle();
-                result.putString("id", id_str);
-                FragmentManager fm = ((MainActivity)getContext()).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction;
-                OtherInfoFragment otherInfoFragment = new OtherInfoFragment();
-                otherInfoFragment.setArguments(result);
-                fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.main_ly,otherInfoFragment);
-                fragmentTransaction.commit();
-
-            }
-        });
         return convertView;
     }
 

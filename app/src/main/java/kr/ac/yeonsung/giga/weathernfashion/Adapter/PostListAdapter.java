@@ -80,8 +80,6 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
         String post_image_str = mData.get(position).getPost_image();
         String post_id = mData.get(position).getPost_id();
 
-        System.out.println("asdasd : "+post_image_str);
-        System.out.println("asdasd : "+post_id);
     riversRef.child(post_image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
         @Override
         public void onSuccess(Uri uri) {
@@ -104,8 +102,10 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
                 PostViewFragment postViewFragment = new PostViewFragment();
                 postViewFragment.setArguments(result);
                 fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.main_ly,postViewFragment);
-                fragmentTransaction.commit();
+                fragmentTransaction.addToBackStack(null)
+                        .setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
+                        .replace(R.id.main_ly,postViewFragment)
+                        .commit();
 
             }
         });

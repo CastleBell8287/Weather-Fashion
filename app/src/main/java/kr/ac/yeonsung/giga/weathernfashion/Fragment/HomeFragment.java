@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +36,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 
 import kr.ac.yeonsung.giga.weathernfashion.Activities.LoginActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.PostActivity;
@@ -51,7 +53,7 @@ import kr.ac.yeonsung.giga.weathernfashion.methods.UserMethods;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment{
     FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseUser user = auth.getCurrentUser();
     UserMethods userMethods = new UserMethods();
@@ -276,12 +278,10 @@ public class HomeFragment extends Fragment {
                                 if (Long.parseLong(document.child("post_now_date").getValue().toString())>=Long.parseLong(date3+"000000")
                                         && Long.parseLong(document.child("post_now_date").getValue().toString())<=Long.parseLong(date3+"999999")
                                 ) {
-                                    System.out.println(document.getValue());
                                     String postTitle = document.child("post_title").getValue().toString();
                                     String postImage = document.child("post_image").getValue().toString();
                                     PostRank postRank = new PostRank(postImage, postTitle);
                                     rank_list.add(postRank);
-                                    System.out.println(document.child("post_title").getValue());
                                 }
                                 }
                             Collections.reverse(rank_list);
