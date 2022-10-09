@@ -5,14 +5,18 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,7 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.PostListAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.UserListAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
@@ -105,8 +111,28 @@ public class PostFragment extends Fragment {
         layoutManager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(layoutManager);
         autoCompleteTextView = view.findViewById(R.id.autoDatas);
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                List<UserList> l =  new ArrayList<>();
+                l.add((UserList) parent.getItemAtPosition(position));
 
+                Bundle result = new Bundle();
+                result.putString("id", l.get(0).getUser_id());
+                FragmentManager fm = ((MainActivity)getContext()).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction;
+                OtherInfoFragment otherInfoFragment = new OtherInfoFragment();
+                otherInfoFragment.setArguments(result);
+                fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction.addToBackStack(null)
+                        .setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
+                        .replace(R.id.main_ly,otherInfoFragment)
+                        .commit();
+            }
+        });
         getPostList();
+
+
 
     }
 
@@ -151,4 +177,6 @@ public class PostFragment extends Fragment {
             }
         });
     }
+
+
 }
