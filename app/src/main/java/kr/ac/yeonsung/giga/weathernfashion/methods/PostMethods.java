@@ -139,7 +139,7 @@ public class PostMethods extends Activity {
             }
             mintemp.setText(min_temp+"º");
             maxtemp.setText(max_temp+"º");
-            temp.setText(temp_str+"º");
+            temp.setText(temp_str);
             date.setText(time);
             date.setVisibility(View.VISIBLE);
         }catch (Exception e){

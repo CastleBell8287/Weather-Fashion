@@ -72,7 +72,7 @@ public class PostActivity extends AppCompatActivity {
     StorageReference storageRef = storage.getReference();
     API api = new API();
     PostMethods postMethods = new PostMethods();
-    TextView back_to_post_main,post_done,photo_weather,postlocation,postdate,choice_post_categotis
+    TextView back_to_post_main,post_done,temp,postlocation,postdate,choice_post_categotis
             ,choice_post_categotis2,post_selected_category,mintemp,maxtemp;
     EditText post_title,post_main_text;
     ImageView post_img;
@@ -102,8 +102,9 @@ public class PostActivity extends AppCompatActivity {
         post_main_text = findViewById(R.id.post_main_text);
         mintemp = findViewById(R.id.image_mintemp);
         maxtemp = findViewById(R.id.image_maxtemp);
-        photo_weather = findViewById(R.id.photo_weather);
+        temp = findViewById(R.id.image_temp);
         postlocation = findViewById(R.id.image_location);
+        temp = findViewById(R.id.image_temp);
         postdate = findViewById(R.id.photo_weather3);
         choice_post_categotis = findViewById(R.id.choice_post_categoris);
         choice_post_categotis2 = findViewById(R.id.choice_post_categoris2);
@@ -288,8 +289,7 @@ public class PostActivity extends AppCompatActivity {
                 lon=0-convertToDegree(attrLONGITUDE);
             }
         }
-        photo_weather.setText(lat+" , "+lon+"\n"+attrDate);
-        postMethods.getWeatherNow_post(PostActivity.this, lat, lon, attrDate,photo_weather,mintemp,maxtemp, postdate);
+        postMethods.getWeatherNow_post(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
     }
 
     private String getRealPathFromURI(Uri uri){
@@ -437,9 +437,7 @@ public void setPost(){
     Date date = new Date();
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-    System.out.println("카테 : "+post_categories);
     boolean b = TextUtils.isEmpty(image_uri);
-    System.out.println("불린 : "+b);
     if(post_title.getText().length()==0){
         api.getToast(this,"제목을 입력해주세요.");
     }else if(post_main_text.getText().length()==0){
@@ -463,13 +461,14 @@ public void setPost(){
         String user_name_str = user_name;
         String post_min_temp = mintemp.getText().toString();
         String post_max_temp = maxtemp.getText().toString();
+        String post_temp = temp.getText().toString();
         String location = postlocation.getText().toString();
         String post_date = h;
         String now_date = sdf.format(date);
         Long post_likeCount = 0L;
         HashMap<String, Boolean> post_likes = null;
         String postuserid = user.getUid();
-        Post post = new Post(title, content, image, user_name_str, post_min_temp, post_max_temp, location
+        Post post = new Post(title, content, image, user_name_str, post_min_temp, post_max_temp, post_temp, location
                 , post_date, now_date, post_likeCount, post_likes, post_categories, postuserid);
         mDatabase.child("post").push().setValue(post);
 

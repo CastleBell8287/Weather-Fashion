@@ -146,7 +146,6 @@ public class HomeFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         Button logout = view.findViewById(R.id.logout_btn);
-        Button go_to_post = view.findViewById(R.id.go_to_post);
         cal.setTime(new Date());
         date2 = df.format(cal.getTime());
         cal.setTime(new Date());
@@ -179,7 +178,6 @@ public class HomeFragment extends Fragment{
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         logout.setOnClickListener(btnListener);
-        go_to_post.setOnClickListener(btnListener);
         weather_icon.setOnClickListener(btnListener);
 
         for(int i = 1; i<9; i++){
@@ -235,11 +233,6 @@ public class HomeFragment extends Fragment{
         @Override
         public void onClick(View view) {
             switch(view.getId()){
-                case R.id.go_to_post:
-                    Intent intent2 = new Intent(getContext(), PostActivity.class);
-                    startActivity(intent2);
-                    intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    break;
                 case R.id.logout_btn:
                     FirebaseAuth.getInstance().signOut();
                     Intent intent = new Intent(getContext(), LoginActivity.class);

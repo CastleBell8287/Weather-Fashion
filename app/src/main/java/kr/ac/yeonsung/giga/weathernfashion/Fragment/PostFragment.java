@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,6 +50,13 @@ public class PostFragment extends Fragment {
     RecyclerView recyclerView;
     GridLayoutManager layoutManager;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    ArrayList<String> min_list = new ArrayList<>();
+    ArrayList<String> max_list = new ArrayList<>();
+    ArrayList<String> cate_list = new ArrayList<>(Arrays.asList("전체","캐쥬얼" ,"아메카지", "미니멀", "스트릿","기타"));
+    Long minL;
+    Long maxL;
+    Long tempL;
+    Spinner min_spinner, max_spinner, cate_spinner;
     AutoCompleteTextView autoCompleteTextView;
     ArrayList<UserList> user_list = new ArrayList<>();
     String name;
@@ -105,8 +114,20 @@ public class PostFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        for(int i=-20; i<40; i++){
+            min_list.add(String.valueOf(i));
+            max_list.add(String.valueOf(i));
+        }
+
         user_name_set();
         recyclerView = view.findViewById(R.id.grid_recyclerView);
+        min_spinner = view.findViewById(R.id.min);
+        max_spinner = view.findViewById(R.id.max);
+        cate_spinner = view.findViewById(R.id.ca);
+        setSpinner();
+        min_spinner.setOnItemSelectedListener(spinnerListener);
+        max_spinner.setOnItemSelectedListener(spinnerListener);
+        cate_spinner.setOnItemSelectedListener(spinnerListener);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(layoutManager);
@@ -130,7 +151,7 @@ public class PostFragment extends Fragment {
                         .commit();
             }
         });
-        getPostList();
+//        getPostList();
 
 
 
@@ -149,7 +170,6 @@ public class PostFragment extends Fragment {
                     autoCompleteTextView.setAdapter(userListAdapter);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -158,14 +178,26 @@ public class PostFragment extends Fragment {
     }
 
     public void getPostList(){
+
         mDatabase.child("post").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 list.clear();
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
-                    list.add(new PostList(snapshot1.child("post_image").getValue().toString(),snapshot1.getKey()));
-                    System.out.println("post_image : "+snapshot1.child("post_image").getValue().toString());
-                    System.out.println("post_id : "+snapshot1.getKey());
+                    minL = Long.parseLong(min_spinner.getSelectedItem().toString());
+                    maxL = Long.parseLong(max_spinner.getSelectedItem().toString());
+                    tempL = Long.parseLong(snapshot1.child("post_temp").getValue().toString());
+                    if(minL<=tempL && tempL<=maxL) {
+                        if(cate_spinner.getSelectedItem().equals("전체")) {
+                            list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                        }else{
+                            ArrayList<String> post_cate = new ArrayList<>();
+                            post_cate = (ArrayList<String>)snapshot1.child("post_categories").getValue();
+                            if(post_cate.contains(cate_spinner.getSelectedItem().toString())) {
+                                list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                            }
+                        };
+                    }
                 }
                 Collections.reverse(list);
                 adapter = new PostListAdapter(getContext(),list);
@@ -178,5 +210,30 @@ public class PostFragment extends Fragment {
         });
     }
 
+    public void setSpinner(){
+        ArrayAdapter<String> min_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,min_list);
+        min_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        min_spinner.setAdapter(min_adapter);
 
+        ArrayAdapter<String> max_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,max_list);
+        min_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        max_spinner.setAdapter(max_adapter);
+        max_spinner.setSelection(max_list.size()-1);
+
+        ArrayAdapter<String> ca_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,cate_list);
+        ca_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        cate_spinner.setAdapter(ca_adapter);
+    }
+
+    AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            getPostList();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
 }

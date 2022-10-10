@@ -1,22 +1,17 @@
 package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.GridLayoutManager;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.CategoryAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
@@ -59,6 +56,8 @@ public class PostViewFragment extends Fragment {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("post");
+    StorageReference riversRef2 = storageRef.child("profile");
+    String user_id;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     RecyclerView.Adapter adapter_list;
     RecyclerView recyclerView;
@@ -66,8 +65,9 @@ public class PostViewFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
     HashMap<String,Boolean> hash = new HashMap<>();
     String id;
-    TextView view_user_name,view_title,view_maxtemp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
+    TextView view_user_name,view_title,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
     ImageView view_image,like;
+    CircleImageView user_profile;
     public static final String LOCAL_BROADCAST = "com.xfhy.casualweather.LOCAL_BROADCAST";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -123,6 +123,7 @@ public class PostViewFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         view_user_name = view.findViewById(R.id.view_user_name);
         view_title = view.findViewById(R.id.view_title);
+        view_temp = view.findViewById(R.id.view_temp);
         view_maxtemp = view.findViewById(R.id.view_maxtemp);
         view_mintemp = view.findViewById(R.id.view_mintemp);
         view_location = view.findViewById(R.id.view_location);
@@ -132,7 +133,7 @@ public class PostViewFragment extends Fragment {
         view_now_date = view.findViewById(R.id.view_now_date);
         view_content = view.findViewById(R.id.view_content);
         view_image = view.findViewById(R.id.view_image);
-
+        user_profile = view.findViewById(R.id.user_profile);
         recyclerView.setLayoutManager(layoutManager);
         Bundle bundle = getArguments();
         id = bundle.getString("id");
@@ -153,19 +154,19 @@ public class PostViewFragment extends Fragment {
                 if (hash.containsKey(user.getUid())) {
                     System.out.println("해쉬에 내 유저 아이디가 있으면" + hash.containsKey(user.getUid()));
                     if (hash.get(user.getUid()) == true) {
-                        like.setImageResource(R.drawable.thumb_up);
+                        like.setImageResource(R.drawable.ic_baseline_favorite_24);
                         System.out.println("내 아이디의 값이 true면 : " + hash.get(user.getUid()));
                     } else {
-                        like.setImageResource(R.drawable.ic_baseline_thumb_up_24);
+                        like.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                         System.out.println("내 아이디의 값이 false면 : " + hash.get(user.getUid()));
                     }
                 } else {
                     System.out.println("해쉬에 내 유저 아이디가 없으면" + hash.containsKey(user.getUid()));
-                    like.setImageResource(R.drawable.ic_baseline_thumb_up_24);
+                    like.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                 }
             }else{
                     System.out.println("파이어베이스에 좋아요 누른 사람이 한명도 없으면" + hash.containsKey(user.getUid()));
-                    like.setImageResource(R.drawable.ic_baseline_thumb_up_24); 
+                    like.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                 }
 
             }
@@ -175,19 +176,46 @@ public class PostViewFragment extends Fragment {
             }
         });
         //세팅
+
+
+
         mDatabase.child("post").child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 category_list.clear();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sdf2 = new SimpleDateFormat("yy-MM-dd HH:mm");
                 Date date = null;
                 Date date2 = null;
                 try {
                     date = sdf.parse(snapshot.child("post_date").getValue().toString());
                     date2 = sdf.parse(snapshot.child("post_now_date").getValue().toString());
+
+                    mDatabase.child("users").child(snapshot.child("post_user_id").getValue().toString()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            riversRef2.child(snapshot.child("user_profile").getValue().toString()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Glide.with(getActivity()).load(uri)
+                                            .override(50,50)
+                                            .into(user_profile);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                     view_user_name.setText(snapshot.child("post_user_name").getValue().toString());
                     view_title.setText(snapshot.child("post_title").getValue().toString());
+                    view_temp.setText(snapshot.child("post_temp").getValue().toString()+"º");
                     view_maxtemp.setText(snapshot.child("post_max_temp").getValue().toString());
                     view_mintemp.setText(snapshot.child("post_min_temp").getValue().toString());
                     view_location.setText(snapshot.child("post_location").getValue().toString());
@@ -195,9 +223,10 @@ public class PostViewFragment extends Fragment {
                     likecount.setText(snapshot.child("post_likeCount").getValue().toString());
                     view_date.setText(sdf2.format(date));
                     view_now_date.setText(sdf2.format(date2));
-
+                    user_id = snapshot.child("post_user_id").getValue().toString();
+                    user_profile.setOnClickListener(clickListener);
+                    view_user_name.setOnClickListener(clickListener);
                     category_list = (ArrayList<String>) snapshot.child("post_categories").getValue();
-                    System.out.println(category_list);
                     adapter_list = new CategoryAdapter(getContext(),category_list);
                     recyclerView.setAdapter(adapter_list);
                     adapter_list.notifyDataSetChanged();
@@ -233,9 +262,38 @@ public class PostViewFragment extends Fragment {
                 onLikeClicked(mDatabase.child("post").child(id));
             }
         });
-
     }
 
+    View.OnClickListener clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(!user_id.equals(user.getUid())) {
+                Bundle result = new Bundle();
+                result.putString("id", user_id);
+                FragmentManager fm = ((MainActivity) getContext()).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction;
+                OtherInfoFragment otherInfoFragment = new OtherInfoFragment();
+                otherInfoFragment.setArguments(result);
+                fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction.addToBackStack(null)
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                        .replace(R.id.main_ly, otherInfoFragment)
+                        .commit();
+            }else {
+                Bundle result = new Bundle();
+                result.putString("id", user_id);
+                FragmentManager fm = ((MainActivity) getContext()).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction;
+                MyInfoFragment myInfoFragment = new MyInfoFragment();
+                myInfoFragment.setArguments(result);
+                fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction.addToBackStack(null)
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                        .replace(R.id.main_ly, myInfoFragment)
+                        .commit();
+            }
+        }
+    };
 
     private void onLikeClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {

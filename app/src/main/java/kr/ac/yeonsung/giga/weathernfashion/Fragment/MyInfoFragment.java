@@ -23,6 +23,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -76,6 +77,7 @@ public class MyInfoFragment extends Fragment {
     TextView myname, mycomment, back_pressed;
     ImageView setting;
     CircleImageView myprofile;
+    Button post_write_btn;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -126,7 +128,8 @@ public class MyInfoFragment extends Fragment {
         myprofile = view.findViewById(R.id.my_profile);
         setting = view.findViewById(R.id.setting);
         setting.setOnClickListener(getProfileimg);
-
+        post_write_btn = view.findViewById(R.id.post_write_btn);
+        post_write_btn.setOnClickListener(btnListener);
         recyclerView = view.findViewById(R.id.myinfo_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
@@ -136,6 +139,19 @@ public class MyInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
+
+    View.OnClickListener btnListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.post_write_btn:
+                    Intent intent2 = new Intent(getContext(), PostActivity.class);
+                    startActivity(intent2);
+                    intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
