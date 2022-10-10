@@ -302,7 +302,7 @@ public class HomeFragment extends Fragment{
         int idx = gu.getText().toString().indexOf("시");
         String adress = si.getText().toString() + " " +
                 gu.getText().toString().substring(0, idx+1);
-        System.out.println(adress+  "집에 갈래");
+        System.out.println(adress);
         mDatabase.child("weather").child(adress).child(date2).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

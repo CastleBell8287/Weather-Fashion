@@ -187,7 +187,6 @@ public class API {
         try {
             int idx = adLevel2.indexOf("시");
             adLevel2 = adLevel2.substring(0,idx+1);
-            System.out.println(adLevel2);
             if(lon<0) {
                 lon *= -1;
             } else {
