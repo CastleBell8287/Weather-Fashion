@@ -75,8 +75,8 @@ public class API {
             String provider = LocationManager.NETWORK_PROVIDER;
             Location location = lm.getLastKnownLocation(provider);
 
-//            lon = location.getLongitude();
-//            lat = location.getLatitude();
+            lon = location.getLongitude();
+            lat = location.getLatitude();
 
         }
         if (ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_MEDIA_LOCATION) !=
@@ -95,8 +95,6 @@ public class API {
         try {
             //서울시청의 위도와 경도이지만 핸드폰 위경도로 받을 수 있게 수정해야해요!
             getGpsLocation(activity);
-            lon = 126.842892677;
-            lat = 37.653102738;
             //OpenAPI call하는 URL
 //            https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
             URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon
@@ -296,8 +294,112 @@ public class API {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mintemp.setText(tmn.get(0)+"º");
-                    maxtemp.setText(tmx.get(0)+"º");
+                    mintemp.setText(tmn.get(0).substring(0,tmn.get(0).lastIndexOf("."))+"º");
+                    maxtemp.setText(tmx.get(0).substring(0,tmx.get(0).lastIndexOf("."))+"º");
+                }
+            });
+            rd.close();
+            conn.disconnect();
+
+        }catch(Exception e) {}
+        finally {
+
+        }
+    }
+    public void getWeatherList(Activity activity, TextView mintemp, TextView maxtemp){
+        ArrayList<String> tmx = new ArrayList<String>();
+        ArrayList<String> tmn = new ArrayList<String>();
+        try {
+            if(lon<0) {
+                lon *= -1;
+            } else {
+                lon *= 1;
+            }
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            DateFormat df = new SimpleDateFormat("yyyyMMdd");
+            date2 = df.format(cal.getTime()) ;
+            System.out.println("current: " + df.format(cal.getTime()));
+            cal.add(Calendar.DATE, -1);
+            System.out.println("after: " + df.format(cal.getTime()));
+            String date = df.format(cal.getTime()).toString();
+
+            LatXLngY tmp = convertGRID_GPS(TO_GRID, lat, lon);
+
+            String latText = String.valueOf(tmp.x);
+            String lonText = String.valueOf(tmp.y);
+
+            int latindex = latText.indexOf(".");
+            int lonindex = lonText.indexOf(".");
+
+            latText = latText.substring(0,latindex);
+            lonText = lonText.substring(0,lonindex);
+
+            System.out.println("lat : "+ latText);
+            System.out.println("lon : "+ lonText);
+
+            StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
+            urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=jMWjbP9YhgZtze0FB7Z53iwbcJQe%2FhlgQeZ%2FgG1bJIjulGTrATjO4xDFruA9Pql8MzR41ldgbX6gHD4dr2Gmww%3D%3D"); /*Service Key*/
+            urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
+            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8")); /*한 페이지 결과 수*/
+            urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
+            urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); /*‘21년 6월 28일발표*/
+            urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode("2300", "UTF-8")); /*05시 발표*/
+            urlBuilder.append("&" + URLEncoder.encode("nx","UTF-8") + "=" + URLEncoder.encode(latText, "UTF-8")); /*예보지점의 X 좌표값*/
+            urlBuilder.append("&" + URLEncoder.encode("ny","UTF-8") + "=" + URLEncoder.encode(lonText, "UTF-8")); /*예보지점의 Y 좌표값*/
+            System.out.println(urlBuilder.toString());
+            URL url = new URL(urlBuilder.toString());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-type", "application/json");
+            System.out.println("Response code: " + conn.getResponseCode());
+            BufferedReader rd;
+            if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            } else {
+                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            }
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
+            }
+            cal.add(Calendar.DATE, 1);
+            date = df.format(cal.getTime()).toString();
+
+            JSONObject jsonObj = new JSONObject(sb.toString());
+            JSONObject response = (JSONObject) jsonObj.get("response");
+            JSONObject body = (JSONObject) response.get("body");
+
+            JSONObject items = (JSONObject) body.get("items");
+            JSONArray item = (JSONArray) items.get("item");
+            System.out.println(item);
+            JSONObject jsonEx;
+
+            for(int i = 0; i < item.length(); i++) {
+                jsonEx = (JSONObject) item.get(i);
+                if (jsonEx.get("fcstDate").equals(date)) {
+                    switch (jsonEx.get("category").toString()){
+                        case "TMN":
+                            if (jsonEx.get("fcstTime").equals("0600")){
+                                tmn.add(jsonEx.get("fcstValue").toString());
+                            }
+                            break;
+                        case "TMX":
+                            if(jsonEx.get("fcstTime").equals("1500")){
+                                tmx.add(jsonEx.get("fcstValue").toString());
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mintemp.setText(tmn.get(0).substring(0,tmn.get(0).lastIndexOf("."))+"º");
+                    maxtemp.setText(tmx.get(0).substring(0,tmx.get(0).lastIndexOf("."))+"º");
                 }
             });
             rd.close();
@@ -423,8 +525,6 @@ public class API {
 
     public void getMyAddress(TextView si, TextView gu, TextView dong) {
         try {
-            lon = 126.842892677;
-            lat = 37.653102738;
             URL url2 = new URL("http://api.vworld.kr/req/address?service=address&request=get" +
                     "Address&key=173F9427-85AF-30BF-808F-DCB8F163058B&point=" +
                     +lon + "," + lat + "&type=PARCEL&format=json\n");
@@ -441,7 +541,8 @@ public class API {
             }
 
             System.out.println(result2);
-            //문자열을 JSON으로 파싱
+
+
             JSONObject jsonObj = new JSONObject(result2);
             JSONObject response = jsonObj.getJSONObject("response");
             JSONArray result3 = response.getJSONArray("result");

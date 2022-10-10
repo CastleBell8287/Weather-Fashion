@@ -23,6 +23,7 @@
 
         <activity
             android:name=".Activities.StartActivity"
+            android:hardwareAccelerated="true"
             android:exported="true">
 
             <intent-filter>

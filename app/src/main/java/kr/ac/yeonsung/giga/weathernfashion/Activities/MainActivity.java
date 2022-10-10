@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.tab_home: {
                     getSupportFragmentManager().beginTransaction()
                             .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                            .addToBackStack(null)
                             .replace(R.id.main_ly, new HomeFragment())
                             .commit();
                     return true;
