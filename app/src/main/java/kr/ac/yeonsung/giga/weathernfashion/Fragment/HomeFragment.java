@@ -193,21 +193,9 @@ public class HomeFragment extends Fragment{
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                api.getMyAddress(si,gu,dong);
-                                getDailyWeather();
-                                api.getWeatherList(getActivity(),min_temp,max_temp);
-
-                                //받아온 TimeDate객체 배열을 Adapter에 넣어주면 끄읕
-//                                adapter = new DailyWeatherAdapter(list);
-//                                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false)) ;
-//                                recyclerView.setAdapter(adapter);
-
-                            } catch (Exception e) {
-                                api.getMyAddress(si,gu,dong);
-                                api.getWeatherList(getActivity(), si.getText().toString(), gu.getText().toString(), min_temp, max_temp);
-                                getDailyWeather();
-                            }
+                            api.getMyAddress(si,gu,dong);
+                            api.getWeatherList(getActivity(),si.getText().toString(), gu.getText().toString(), min_temp,max_temp);
+                            getDailyWeather();
                         }
                     });
 
