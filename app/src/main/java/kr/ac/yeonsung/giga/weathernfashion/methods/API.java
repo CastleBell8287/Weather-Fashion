@@ -75,8 +75,8 @@ public class API {
             String provider = LocationManager.NETWORK_PROVIDER;
             Location location = lm.getLastKnownLocation(provider);
 
-            lon = location.getLongitude();
-            lat = location.getLatitude();
+//            lon = location.getLongitude();
+//            lat = location.getLatitude();
 
         }
         if (ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_MEDIA_LOCATION) !=
@@ -91,10 +91,12 @@ public class API {
 
 
     public void getWeatherNow(Activity activity, ImageView imageView, TextView nowTemp, TextView nowWeather, TextView si, TextView gu, TextView dong,
-                              TextView mintemp, TextView maxtemp, TextView feeltemp, TextView humidity, TextView wind_speed, TextView cloud, TextView weatherCode){
+                              TextView feeltemp, TextView humidity, TextView wind_speed, TextView cloud, TextView weatherCode){
         try {
             //서울시청의 위도와 경도이지만 핸드폰 위경도로 받을 수 있게 수정해야해요!
             getGpsLocation(activity);
+            lon = 126.842892677;
+            lat = 37.653102738;
             //OpenAPI call하는 URL
 //            https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
             URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon
@@ -128,20 +130,6 @@ public class API {
                 temp = main.getString("temp");
             }
 
-            if (main.getString("temp_min").contains(".")) {
-                int min_temp_idx = main.getString("temp_min").indexOf(".");
-                min_temp = main.getString("temp_min").substring(0,min_temp_idx);  // 소수점 첫째 자리까지만 출력
-            } else{
-                min_temp = main.getString("temp_min");
-            }
-
-            if (main.getString("temp_max").contains(".")) {
-                int max_temp_idx = main.getString("temp_max").indexOf(".");
-                max_temp = main.getString("temp_max").substring(0,max_temp_idx);  // 소수점 첫째 자리까지만 출력
-            } else{
-                max_temp = main.getString("temp_max");
-            }
-
             if (main.getString("feels_like").contains(".")) {
                 int feel_temp_idx = main.getString("feels_like").indexOf(".");
                 feel_temp = main.getString("feels_like").substring(0,feel_temp_idx);  // 소수점 첫째 자리까지만 출력
@@ -166,8 +154,6 @@ public class API {
                 public void run() {
                     try {
                         nowTemp.setText(temp+"º");
-                        mintemp.setText(min_temp+"º");
-                        maxtemp.setText(max_temp+"º");
                         feeltemp.setText(feel_temp+"º");
                         humidity.setText(humidity_str+"%");
                         cloud.setText(cloud_str+"%");
@@ -188,7 +174,7 @@ public class API {
         }
 
     }
-    public void getWeatherList(){
+    public void getWeatherList(Activity activity, String adLevel1, String adLevel2, TextView mintemp, TextView maxtemp){
         ArrayList<Weather> timeDataList= new ArrayList<Weather>();
         Weather timeData = null;
         ArrayList<String> temp = new ArrayList<String>();
@@ -199,7 +185,9 @@ public class API {
 //        ArrayList<String> time = null;
 
         try {
-
+            int idx = adLevel2.indexOf("시");
+            adLevel2 = adLevel2.substring(0,idx+1);
+            System.out.println(adLevel2);
             if(lon<0) {
                 lon *= -1;
             } else {
@@ -284,15 +272,21 @@ public class API {
                                 pty.add(jsonEx.get("fcstValue").toString());
                                 break;
                             case "TMN":
-                                tmn.add(jsonEx.get("fcstValue").toString());
+                                if (jsonEx.get("fcstTime").equals("0600")){
+                                    tmn.add(jsonEx.get("fcstValue").toString());
+                                }
+
                                 break;
                             case "TMX":
-                                tmx.add(jsonEx.get("fcstValue").toString());
+                                if(jsonEx.get("fcstTime").equals("1500")){
+                                    tmx.add(jsonEx.get("fcstValue").toString());
+                                }
+
                                 break;
                         }
                     }
                 }
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("weather");
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("weather").child(adLevel1+" "+adLevel2);
             //데이터를 ArrayList에 다 저장했으니 시간별 날씨 정보를 인자로 TimeDate 객체를 생성하고
             //그 객체를 다시 TimeDate형으로 캐스트한 ArrayList에 add() 후 return
             for (int y = 0; y < times.length; y++){
@@ -300,6 +294,13 @@ public class API {
                 Weather weather = new Weather(times[y], sky.get(y), pty.get(y), temp.get(y));
                 mDatabase.child(date2).child(String.valueOf(y)).setValue(weather);
             }
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mintemp.setText(tmn.get(0)+"º");
+                    maxtemp.setText(tmx.get(0)+"º");
+                }
+            });
             rd.close();
             conn.disconnect();
 
@@ -423,6 +424,8 @@ public class API {
 
     public void getMyAddress(TextView si, TextView gu, TextView dong) {
         try {
+            lon = 126.842892677;
+            lat = 37.653102738;
             URL url2 = new URL("http://api.vworld.kr/req/address?service=address&request=get" +
                     "Address&key=173F9427-85AF-30BF-808F-DCB8F163058B&point=" +
                     +lon + "," + lat + "&type=PARCEL&format=json\n");

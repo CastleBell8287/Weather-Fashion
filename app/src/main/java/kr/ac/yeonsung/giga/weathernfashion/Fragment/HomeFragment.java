@@ -180,30 +180,29 @@ public class HomeFragment extends Fragment{
         logout.setOnClickListener(btnListener);
         weather_icon.setOnClickListener(btnListener);
 
-        for(int i = 1; i<9; i++){
-
-            System.out.println(i);
-        }
-
-
-
 
         new Thread(){
             @Override
             public void run() {
                 try {
-                    api.getWeatherNow(getActivity(), weather_icon,nowTemp, nowWeather, si, gu, dong, min_temp, max_temp, feel_temp, humidity, wind_speed, cloud, weatherCode);
+
+                    api.getWeatherNow(getActivity(), weather_icon,nowTemp, nowWeather, si, gu, dong, feel_temp, humidity, wind_speed, cloud, weatherCode);
                     // 이 위치가 아니면 메소드가 실행이 안됩니다 list2에 값은 저장되는데 이 스레드 밖으로 나가면 사라져요 이걸 해결해야할 것 같습니다
-                    api.getWeatherList();
+
+
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
+
+                                api.getMyAddress(si,gu,dong);
+                                api.getWeatherList(getActivity(), si.getText().toString(), gu.getText().toString(), min_temp, max_temp);
+                                getDailyWeather();
                                 //받아온 TimeDate객체 배열을 Adapter에 넣어주면 끄읕
 //                                adapter = new DailyWeatherAdapter(list);
 //                                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false)) ;
 //                                recyclerView.setAdapter(adapter);
-                                api.getMyAddress(si,gu,dong);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -224,7 +223,6 @@ public class HomeFragment extends Fragment{
 
     public void setCode(){
         weatherCodeStr = weatherCode.getText().toString();
-        getDailyWeather();
         getPostRank();
     }
 
@@ -244,8 +242,8 @@ public class HomeFragment extends Fragment{
                         @Override
                         public void run() {
                             try {
-                                api.getWeatherNow(getActivity(), weather_icon,nowTemp, nowWeather, si, gu, dong, min_temp, max_temp, feel_temp, humidity, wind_speed, cloud, weatherCode);
-
+                                api.getWeatherNow(getActivity(), weather_icon,nowTemp, nowWeather, si, gu, dong, feel_temp, humidity, wind_speed, cloud, weatherCode);
+                                api.getWeatherList(getActivity(), si.getText().toString(), gu.getText().toString(), min_temp, max_temp);
                                 api.getMyAddress(si,gu,dong);// 이 위치가 아니면 메소드가 실행이 안됩니다 list2에 값은 저장되는데 이 스레드 밖으로 나가면 사라져요 이걸 해결해야할 것 같습니다
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -301,7 +299,11 @@ public class HomeFragment extends Fragment{
 
     }
     public void getDailyWeather(){
-        mDatabase.child("weather").child(date2).addListenerForSingleValueEvent(new ValueEventListener() {
+        int idx = gu.getText().toString().indexOf("시");
+        String adress = si.getText().toString() + " " +
+                gu.getText().toString().substring(0, idx+1);
+        System.out.println(adress+  "집에 갈래");
+        mDatabase.child("weather").child(adress).child(date2).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 list.clear();
