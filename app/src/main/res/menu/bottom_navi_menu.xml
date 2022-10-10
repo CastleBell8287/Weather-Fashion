@@ -4,20 +4,17 @@
     android:id="@+id/tab_home"
     android:enabled="true"
     android:icon="@drawable/home"
-    android:iconTint="@color/white"
     android:title="홈"/>
 
     <item
         android:id="@+id/tab_board"
         android:enabled="true"
         android:icon="@drawable/board"
-        android:iconTint="@color/white"
         android:title="게시글"/>
 
     <item
         android:id="@+id/tab_myinfo"
         android:enabled="true"
         android:icon="@drawable/myinfo"
-        android:iconTint="@color/white"
         android:title="MY"/>
 </menu>

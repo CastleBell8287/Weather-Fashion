@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.MainActivity">
-
-   <!-- <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"><-->
     <LinearLayout
         android:id="@+id/main_ly"
         android:layout_width="match_parent"
@@ -28,8 +21,10 @@
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        app:itemTextColor="@color/white"
-        android:layout_gravity="end"
-        app:menu="@menu/bottom_navi_menu"/>
+        android:background="#E8E8E8"
+        app:menu="@menu/bottom_navi_menu"
+        app:itemTextColor="@drawable/menu_select"
+        app:itemIconTint="@drawable/menu_select"
+        android:layout_gravity="end"/>
     </LinearLayout>
 </LinearLayout>

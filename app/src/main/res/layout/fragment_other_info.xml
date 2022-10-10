@@ -3,10 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient"
-
     android:orientation="vertical">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/shadow">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -199,8 +202,7 @@
             android:id="@+id/otherinfo_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_night_square"
             android:scrollbars="vertical" />
     </LinearLayout>
+</LinearLayout>
 </LinearLayout>

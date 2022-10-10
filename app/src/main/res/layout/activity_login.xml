@@ -2,12 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/shadow"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="293dp"
-        android:layout_marginTop="50dp"
+
         android:gravity="center"
         android:orientation="vertical">
 
@@ -93,7 +99,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="30dp"
-                android:background="@drawable/radius_btn"
+
                 android:textSize="15dp"
                 android:text="로그인"/>
         </LinearLayout>
@@ -116,5 +122,5 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
-
+    </LinearLayout>
 </LinearLayout>

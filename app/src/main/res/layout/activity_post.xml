@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient"
     android:orientation="vertical"
     tools:context=".Activities.PostActivity"
     android:padding="5dp">
 
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/shadow">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +24,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="23dp"
-                android:textColor="@color/white"
                 android:text=" \u003C"
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="10dp"  />
@@ -29,7 +32,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:textSize="23sp"
-                android:textColor="@color/white"
                 android:text="패션 정보 공유"/>
 
             <View
@@ -43,7 +45,6 @@
                 android:layout_height="wrap_content"
                 android:text="완료"
                 android:textSize="23sp"
-                android:textColor="#92C6DC"
                 android:layout_gravity="right"
                 android:padding="5dp"
                 />
@@ -68,9 +69,6 @@
             android:layout_height="wrap_content"
             android:hint="제목"
             android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:backgroundTint="@color/white"
             />
 
         <EditText
@@ -79,9 +77,6 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:hint=" 게시글 내용 작성 \n 날씨 or 불편했던점 (더웠어요, 추웠어요).."
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:backgroundTint="@color/white"
             android:lines="10"
             android:gravity="top"
             />
@@ -89,40 +84,50 @@
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="10dp"
+    android:background="@drawable/radius_imgv">
         <ImageView
             android:id="@+id/post_img"
             android:layout_margin="2dp"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/radius_imgv"
-            android:src="@drawable/camera_white"/>
-
+            android:src="@drawable/camera"/>
+</LinearLayout>
         <TextView
-            android:id="@+id/photo_weather"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text=" 사진을 선택해 주세요."
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/image_temp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text=" 사진을 선택해 주세요."
+            android:visibility="gone"
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/image_mintemp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:visibility="gone"
             android:text="최저온도"
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/image_maxtemp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:visibility="gone"
             android:text=" 최고온도"
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/image_location"
             android:layout_width="match_parent"
@@ -130,8 +135,7 @@
             android:layout_marginTop="10dp"
             android:text=""
             android:visibility="gone"
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
+            android:textSize="20sp" />
         <TextView
             android:id="@+id/photo_weather3"
             android:layout_width="match_parent"
@@ -139,13 +143,11 @@
             android:layout_marginTop="10dp"
             android:text=""
             android:visibility="gone"
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
+            android:textSize="20sp" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:backgroundTint="#BABABA"
             android:clickable="false"
             android:enabled="false"
             />
@@ -161,7 +163,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:text=" 카테고리 선택"
-                android:textColor="@color/white"
                 android:gravity="left"/>
 
             <View
@@ -176,7 +177,6 @@
                 android:textSize="20sp"
                 android:text="\u003E"
                 android:layout_marginRight="30dp"
-                android:textColor="@color/white"
                 android:gravity="right"/>
 
         </LinearLayout>
@@ -185,11 +185,9 @@
             android:id="@+id/post_selected_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="카테고리를 선택해 주세요"
-            android:textSize="20sp"
-            android:textColor="@color/post_hint_color"/>
+            android:textSize="20sp" />
     </LinearLayout>
-
-
-
+</LinearLayout>
 </LinearLayout>
