@@ -32,7 +32,7 @@ public class UserMethods extends Activity{
     API api = new API();
     Boolean result;
 
-    public void join_fb(String email, String passwd, String name, String phone, List<String> styles, Activity activity){
+    public void join_fb(String email, String passwd, String name, String phone, List<String> styles, String gender, Activity activity){
         FirebaseAuth mAuth;
         mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(email, passwd)
@@ -56,7 +56,7 @@ public class UserMethods extends Activity{
                                     }else {
                                         user = mAuth.getCurrentUser();
                                         Toast.makeText(activity, "성공", Toast.LENGTH_SHORT).show();
-                                        join_user(user.getUid(),email,passwd,name,phone,styles,activity);
+                                        join_user(user.getUid(),email,passwd,name,phone,styles,gender,activity);
                                         mystartActivity(activity, LoginActivity.class);
                                     }
                                 }
@@ -76,7 +76,7 @@ public class UserMethods extends Activity{
                 });
     }
 
-    public void join_user(String uid, String email, String passwd, String name, String phone, List<String> styles, Activity activity){
+    public void join_user(String uid, String email, String passwd, String name, String phone, List<String> styles, String gender, Activity activity){
         DatabaseReference mDatabase;
 
         long now = System.currentTimeMillis();
@@ -85,7 +85,7 @@ public class UserMethods extends Activity{
         String reg_date = sdf.format(date);
         String usercomment = "";
         String userprofile = "basic.png";
-        User user = new User(email, passwd, name, phone, styles, reg_date,usercomment,userprofile);
+        User user = new User(email, passwd, name, phone, styles, reg_date,usercomment,userprofile, gender);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 

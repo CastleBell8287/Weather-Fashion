@@ -85,6 +85,7 @@ public class PostActivity extends AppCompatActivity {
     String attrLONGITUDE_REF;
     String attrDate;
     String user_name;
+    String user_gender;
     ImageView imageView2;
     String image_uri = null;
     String image_str = null;
@@ -422,6 +423,7 @@ public void getName() {
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
                     if(snapshot1.child("user_email").getValue().toString().equals(user.getEmail())){
                         user_name = snapshot1.child("user_name").getValue().toString();
+                        user_gender = snapshot1.child("user_gender").getValue().toString();
                     }
                 }
             }
@@ -469,7 +471,7 @@ public void setPost(){
         HashMap<String, Boolean> post_likes = null;
         String postuserid = user.getUid();
         Post post = new Post(title, content, image, user_name_str, post_min_temp, post_max_temp, post_temp, location
-                , post_date, now_date, post_likeCount, post_likes, post_categories, postuserid);
+                , post_date, now_date, post_likeCount, post_likes, post_categories, postuserid, user_gender);
         mDatabase.child("post").push().setValue(post);
 
         api.getToast(this,"업로드 성공");

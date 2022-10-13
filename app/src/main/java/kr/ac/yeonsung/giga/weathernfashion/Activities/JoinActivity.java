@@ -8,13 +8,18 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import kr.ac.yeonsung.giga.weathernfashion.R;
@@ -27,7 +32,6 @@ public class JoinActivity extends Activity {
     private EditText user_name;
     private EditText user_pwcheck;
     private EditText user_phone;
-    private String[] email_array;
     Boolean result = false;
     UserMethods userMethods = new UserMethods();
     API api = new API();
@@ -38,8 +42,11 @@ public class JoinActivity extends Activity {
     private String pwcheck;
     private String name;
     private String phone;
+    private String gender;
     private Intent intent;
 
+
+    private Spinner gender_spinner;
     private Button btn_other; //기타
     private Button btn_casual; //캐주얼
     private Button btn_ame; //아메카지
@@ -70,6 +77,8 @@ public class JoinActivity extends Activity {
         btn_minimal = findViewById(R.id.btn_minimal); //미니얼
         btn_street =findViewById(R.id.btn_street); //스트릿
 
+        gender_spinner = findViewById(R.id.spinner_gender);
+
         btn_other.setOnClickListener(btnListner);
         btn_casual.setOnClickListener(btnListner);
         btn_ame.setOnClickListener(btnListner);
@@ -79,6 +88,10 @@ public class JoinActivity extends Activity {
 
         check_btn.setOnClickListener(checkListener);
 
+        List<String> gender_list = new ArrayList<>(Arrays.asList("남자","여자"));
+        ArrayAdapter<String> gender_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,gender_list);
+        gender_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        gender_spinner.setAdapter(gender_adapter);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
         //텍스트뷰 텍스트 -> String 변환
@@ -94,6 +107,19 @@ public class JoinActivity extends Activity {
         spannableFashion.setSpan(new RelativeSizeSpan(1.6f), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         text_fashion.setText(spannableFashion);
 //////////////////////////////////////////////////////////////////////////////////////////////
+        gender_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                gender = adapterView.getItemAtPosition(i).toString();
+                System.out.println("ㅎㅎ : " + gender);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
     }
 
@@ -143,7 +169,7 @@ View.OnClickListener join_btn_listener = new View.OnClickListener() {
             if (result == false) { // 중복체크 완료 후
                 if (email.length() >= 6 && pw.length() >= 6) {
                     if (pw.equals(pwcheck)) {
-                        userMethods.join_fb(email,pw,name,phone,styles,JoinActivity.this);
+                        userMethods.join_fb(email,pw,name,phone,styles,gender,JoinActivity.this);
                     } else {
                         api.getToast(JoinActivity.this, "비밀번호가 일치하지 않습니다.");
                     }
