@@ -1,6 +1,8 @@
 package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -38,6 +40,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
 
+import kr.ac.yeonsung.giga.weathernfashion.Activities.LoadingDialog;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.LoginActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.PostActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.PostRankAdapter;
@@ -95,7 +98,7 @@ public class HomeFragment extends Fragment{
         return new HomeFragment();
     }
 
-
+    LoadingDialog loadingDialog;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -144,7 +147,10 @@ public class HomeFragment extends Fragment{
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        loadingDialog = new LoadingDialog(getContext());
+        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        loadingDialog.setCancelable(false);
+        loadingDialog.show();
         Button logout = view.findViewById(R.id.logout_btn);
         cal.setTime(new Date());
         date2 = df.format(cal.getTime());
@@ -196,6 +202,7 @@ public class HomeFragment extends Fragment{
                             api.getMyAddress(si,gu,dong);
                             api.getWeatherList(getActivity(),si.getText().toString(), gu.getText().toString(), min_temp,max_temp);
                             getDailyWeather();
+                            loadingDialog.dismiss();
                         }
                     });
 

@@ -53,10 +53,11 @@ public class PostFragment extends Fragment {
     ArrayList<String> min_list = new ArrayList<>();
     ArrayList<String> max_list = new ArrayList<>();
     ArrayList<String> cate_list = new ArrayList<>(Arrays.asList("전체","캐쥬얼" ,"아메카지", "미니멀", "스트릿","기타"));
+    ArrayList<String> gender_list = new ArrayList<>(Arrays.asList("전체", "남자", "여자"));
     Long minL;
     Long maxL;
     Long tempL;
-    Spinner min_spinner, max_spinner, cate_spinner;
+    Spinner min_spinner, max_spinner, cate_spinner, gender_spinner;
     AutoCompleteTextView autoCompleteTextView;
     ArrayList<UserList> user_list = new ArrayList<>();
     String name;
@@ -124,10 +125,12 @@ public class PostFragment extends Fragment {
         min_spinner = view.findViewById(R.id.min);
         max_spinner = view.findViewById(R.id.max);
         cate_spinner = view.findViewById(R.id.ca);
+        gender_spinner = view.findViewById(R.id.gender_spinner);
         setSpinner();
         min_spinner.setOnItemSelectedListener(spinnerListener);
         max_spinner.setOnItemSelectedListener(spinnerListener);
         cate_spinner.setOnItemSelectedListener(spinnerListener);
+        gender_spinner.setOnItemSelectedListener(spinnerListener);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(layoutManager);
@@ -189,6 +192,7 @@ public class PostFragment extends Fragment {
                     tempL = Long.parseLong(snapshot1.child("post_temp").getValue().toString());
                     if(minL<=tempL && tempL<=maxL) {
                         if(cate_spinner.getSelectedItem().equals("전체")) {
+                            System.out.println(snapshot1.child("post_gender").getValue());
                             list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
                         }else{
                             ArrayList<String> post_cate = new ArrayList<>();
@@ -223,6 +227,10 @@ public class PostFragment extends Fragment {
         ArrayAdapter<String> ca_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,cate_list);
         ca_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cate_spinner.setAdapter(ca_adapter);
+
+        ArrayAdapter<String> gender_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,gender_list);
+        gender_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        gender_spinner.setAdapter(gender_adapter);
     }
 
     AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener() {

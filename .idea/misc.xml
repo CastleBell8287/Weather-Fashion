@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/drawable/progress_image.xml" value="0.1625" />
+        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/drawable/radius_text_empty.xml" value="0.3505" />
         <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/layout/activity_join.xml" value="0.28177083333333336" />
-        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/layout/fragment_post.xml" value="0.3416666666666667" />
+        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/layout/dialog_progress.xml" value="0.3953125" />
+        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/layout/fragment_post.xml" value="0.33" />
         <entry key="..\:/Users/sad96/AndroidStudioProjects/WeathernFashion/app/src/main/res/layout/activity_main.xml" value="0.14868287740628167" />
         <entry key="..\:/Users/sad96/AndroidStudioProjects/WeathernFashion/app/src/main/res/layout/activity_start.xml" value="0.14868287740628167" />
         <entry key="..\:/Users/sad96/AndroidStudioProjects/WeathernFashion/app/src/main/res/layout/fragment_home.xml" value="0.14868287740628167" />
