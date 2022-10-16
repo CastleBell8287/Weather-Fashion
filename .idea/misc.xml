@@ -3,11 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/drawable/progress_image.xml" value="0.1625" />
-        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/drawable/radius_text_empty.xml" value="0.3505" />
-        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/layout/activity_join.xml" value="0.28177083333333336" />
-        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/layout/dialog_progress.xml" value="0.3953125" />
-        <entry key="..\:/Users/sad96/AndroidStudioProjects/WeatherFashion/app/src/main/res/layout/fragment_post.xml" value="0.33" />
         <entry key="..\:/Users/sad96/AndroidStudioProjects/WeathernFashion/app/src/main/res/layout/activity_main.xml" value="0.14868287740628167" />
         <entry key="..\:/Users/sad96/AndroidStudioProjects/WeathernFashion/app/src/main/res/layout/activity_start.xml" value="0.14868287740628167" />
         <entry key="..\:/Users/sad96/AndroidStudioProjects/WeathernFashion/app/src/main/res/layout/fragment_home.xml" value="0.14868287740628167" />
@@ -50,6 +45,25 @@
         <entry key="..\:/WeathernFashion/app/src/main/res/layout/fragment_setting.xml" value="0.32472826086956524" />
         <entry key="..\:/WeathernFashion/app/src/main/res/layout/recycler_view_item.xml" value="0.39114583333333336" />
         <entry key="..\:/WeathernFashion/app/src/main/res/menu/bottom_navi_menu.xml" value="0.1" />
+        <entry key="..\:/avd_project/WeatherFashion/app/src/main/res/layout/fragment_post_view.xml" value="0.1" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/drawable/bg_night.xml" value="0.207" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/drawable/bg_night_square.xml" value="0.207" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/drawable/ic_baseline_thumb_up_24.xml" value="0.186" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/drawable/myinfo.xml" value="0.207" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/drawable/thumb_up.xml" value="0.186" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/category_recycler_view_item.xml" value="0.18854166666666666" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/dialog_progress.xml" value="0.1" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/fragment_home.xml" value="0.18854166666666666" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/fragment_myinfo.xml" value="0.11302083333333333" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/fragment_other_info.xml" value="0.25833333333333336" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/fragment_post.xml" value="0.14791666666666667" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/fragment_post_view.xml" value="0.18854166666666666" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/myinfo_post_item.xml" value="0.16666666666666666" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/mypage_grid_recycler_view_item.xml" value="0.21197916666666666" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/otherinfo_post_item.xml" value="0.25833333333333336" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/post_list_item.xml" value="0.21197916666666666" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/row_items.xml" value="0.21197916666666666" />
+        <entry key="..\:/ksj/WeatherFashion/app/src/main/res/layout/user_list_item.xml" value="0.25885416666666666" />
         <entry key="..\:/ksj/WeathernFashion/app/src/main/res/font/harlowsoliditalic.xml" value="0.1" />
         <entry key="..\:/ksj/WeathernFashion/app/src/main/res/layout/activity_join.xml" value="0.25885416666666666" />
         <entry key="..\:/ksj/WeathernFashion/app/src/main/res/layout/activity_login.xml" value="0.176" />
