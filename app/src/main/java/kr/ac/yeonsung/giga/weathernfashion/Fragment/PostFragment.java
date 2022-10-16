@@ -191,16 +191,42 @@ public class PostFragment extends Fragment {
                     maxL = Long.parseLong(max_spinner.getSelectedItem().toString());
                     tempL = Long.parseLong(snapshot1.child("post_temp").getValue().toString());
                     if(minL<=tempL && tempL<=maxL) {
-                        if(cate_spinner.getSelectedItem().equals("전체")) {
-                            System.out.println(snapshot1.child("post_gender").getValue());
-                            list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
-                        }else{
-                            ArrayList<String> post_cate = new ArrayList<>();
-                            post_cate = (ArrayList<String>)snapshot1.child("post_categories").getValue();
-                            if(post_cate.contains(cate_spinner.getSelectedItem().toString())) {
+                        if(gender_spinner.getSelectedItem().equals("전체")){
+                            if(cate_spinner.getSelectedItem().equals("전체")){
                                 list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                            } else{
+                                ArrayList<String> post_cate = new ArrayList<>();
+                                post_cate = (ArrayList<String>)snapshot1.child("post_categories").getValue();
+                                if(post_cate.contains(cate_spinner.getSelectedItem().toString())) {
+                                    list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                                }
                             }
-                        };
+                        } else if(gender_spinner.getSelectedItem().equals("남자")) {
+                            if (cate_spinner.getSelectedItem().equals("전체")) {
+                                    if (snapshot1.child("post_gender").getValue().equals("남자")) {
+                                        list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                                    }
+                                } else{
+                                    ArrayList<String> post_cate = new ArrayList<>();
+                                    post_cate = (ArrayList<String>) snapshot1.child("post_categories").getValue();
+                                    if (post_cate.contains(cate_spinner.getSelectedItem().toString())&& snapshot1.child("post_gender").getValue().equals("남자")) {
+                                        list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                                    }
+                                }
+                        } else if(gender_spinner.getSelectedItem().equals("여자")) {
+                            if (cate_spinner.getSelectedItem().equals("전체")) {
+                                if (snapshot1.child("post_gender").getValue().equals("여자")) {
+                                    System.out.println("여자");
+                                    list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                                }
+                            } else {
+                                ArrayList<String> post_cate = new ArrayList<>();
+                                post_cate = (ArrayList<String>) snapshot1.child("post_categories").getValue();
+                                if (post_cate.contains(cate_spinner.getSelectedItem().toString()) && snapshot1.child("post_gender").getValue().equals("여자")) {
+                                    list.add(new PostList(snapshot1.child("post_image").getValue().toString(), snapshot1.getKey()));
+                                }
+                            }
+                        }
                     }
                 }
                 Collections.reverse(list);
