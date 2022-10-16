@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -43,7 +44,12 @@ public class CommentDialog extends Activity {
                         my_comment.setText(dlg_edit_intro.getText().toString());
                     }
                 });
-                dlg.setNegativeButton("취소",null);
+                dlg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(CommentDialog.this, "취소되었습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 dlg.show();
             }
         });
