@@ -47,7 +47,8 @@ public class CommentDialog extends Activity {
                 dlg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(CommentDialog.this, "취소되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(getApplicationContext(), "취소되었습니다.", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 });
                 dlg.show();
