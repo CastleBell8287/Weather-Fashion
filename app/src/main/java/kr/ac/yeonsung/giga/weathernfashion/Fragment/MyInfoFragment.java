@@ -1,7 +1,9 @@
 package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -48,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import kr.ac.yeonsung.giga.weathernfashion.Activities.CommentDialog;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.PostActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.MyInfoAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.PostListAdapter;
@@ -79,6 +82,10 @@ public class MyInfoFragment extends Fragment {
     ImageView setting;
     CircleImageView myprofile;
     Button post_write_btn;
+    Button btn_modify;
+    EditText dlg_edit_intro;
+    TextView my_comment;
+    View dialogView;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -89,6 +96,7 @@ public class MyInfoFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private AlertDialog AlertDialog;
 
     public MyInfoFragment() {
         // Required empty public constructor
@@ -132,6 +140,8 @@ public class MyInfoFragment extends Fragment {
         setting.setOnClickListener(getProfileimg);
         post_write_btn = view.findViewById(R.id.post_write_btn);
         post_write_btn.setOnClickListener(btnListener);
+        btn_modify = view.findViewById(R.id.btn_modify);
+        btn_modify.setOnClickListener(btnListener_m);
         recyclerView = view.findViewById(R.id.myinfo_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
@@ -153,7 +163,25 @@ public class MyInfoFragment extends Fragment {
                     break;
             }
         }
+
     };
+
+
+
+
+    View.OnClickListener btnListener_m = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            dialogView = View.inflate(getContext(), R.layout.dialog_modify,null);
+            androidx.appcompat.app.AlertDialog.Builder dlg = new androidx.appcompat.app.AlertDialog.Builder(dialogView.getContext());
+            dlg.setTitle("한줄 소개 입력");
+            dlg.setView(dialogView);
+            dlg_edit_intro = dialogView.findViewById(R.id.dlg_edit_intro);
+
+            my_comment.setText(dlg_edit_intro.getText().toString());
+         }
+        };
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

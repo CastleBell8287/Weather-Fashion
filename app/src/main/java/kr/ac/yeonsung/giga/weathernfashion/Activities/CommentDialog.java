@@ -23,17 +23,17 @@ public class CommentDialog extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_myinfo);
+        setContentView(R.layout.dialog_modify);
         setTitle("한줄 소개 입력");
 
-        my_comment = findViewById(R.id.my_comment);
-        btn_modify = findViewById(R.id.btn_modify);
+        my_comment = findViewById(R.id.my_comment_modify);
 
-        btn_modify.setOnClickListener(new View.OnClickListener() {
+
+        dialogView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialogView = View.inflate(CommentDialog.this, R.layout.dialog_modify,null);
-                AlertDialog.Builder dlg = new AlertDialog.Builder(CommentDialog.this);
+                AlertDialog.Builder dlg = new AlertDialog.Builder(dialogView.getContext());
                 dlg.setTitle("한줄 소개 입력");
                 dlg.setView(dialogView);
                 dlg.setPositiveButton("변경", new DialogInterface.OnClickListener() {
