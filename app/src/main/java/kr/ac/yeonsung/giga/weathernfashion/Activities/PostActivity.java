@@ -294,9 +294,9 @@ public class PostActivity extends AppCompatActivity {
             }
         }
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd"));
-        if(attrDate.contains(today)){
+        if(attrDate.contains(today)){//사진의 메타데이터와 오늘 날짜가 같을 경우 (아직 openweathermap)
             postMethods.getWeatherNow_post(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
-        }else{
+        }else{ // 아닌 경우 종관asos 이전 날씨 조회
             postMethods.getWeatherNow_post2(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
         }
     }
