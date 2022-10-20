@@ -1,4 +1,4 @@
-package kr.ac.yeonsung.giga.weathernfashion.Activities;
+package kr.ac.yeonsung.giga.weathernfashion.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
