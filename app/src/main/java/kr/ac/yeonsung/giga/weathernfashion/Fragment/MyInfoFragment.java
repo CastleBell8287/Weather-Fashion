@@ -1,10 +1,10 @@
 package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -22,13 +22,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -50,13 +51,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import kr.ac.yeonsung.giga.weathernfashion.Activities.CommentDialog;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.PostActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.MyInfoAdapter;
-import kr.ac.yeonsung.giga.weathernfashion.Adapter.PostListAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.MyInfoList;
-import kr.ac.yeonsung.giga.weathernfashion.VO.PostList;
+import kr.ac.yeonsung.giga.weathernfashion.methods.API;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,6 +71,7 @@ public class MyInfoFragment extends Fragment {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("profile");
+    AlertDialog.Builder builder;
     RecyclerView.Adapter adapter;
     ArrayList<MyInfoList> list = new ArrayList();
     RecyclerView recyclerView;
@@ -84,8 +84,8 @@ public class MyInfoFragment extends Fragment {
     Button post_write_btn;
     Button btn_modify;
     EditText dlg_edit_intro;
-    TextView my_comment;
-    View dialogView;
+    API api = new API();
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -170,15 +170,32 @@ public class MyInfoFragment extends Fragment {
 
 
     View.OnClickListener btnListener_m = new View.OnClickListener() {
+        @SuppressLint("SuspiciousIndentation")
         @Override
         public void onClick(View view) {
-            dialogView = View.inflate(getContext(), R.layout.dialog_modify,null);
-            androidx.appcompat.app.AlertDialog.Builder dlg = new androidx.appcompat.app.AlertDialog.Builder(dialogView.getContext());
-            dlg.setTitle("한줄 소개 입력");
-            dlg.setView(dialogView);
+            builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("한줄 소개");
+
+            View dialogView = View.inflate(getContext(),R.layout.dialog_modify,null);
+            builder.setView(dialogView);
             dlg_edit_intro = dialogView.findViewById(R.id.dlg_edit_intro);
 
-            my_comment.setText(dlg_edit_intro.getText().toString());
+
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                       mDatabase.child("users").child(user.getUid()).child("user_comment").setValue(dlg_edit_intro.getText().toString());
+                       api.getToast(getActivity(),"한줄 소개 수정완료");
+                    }
+                });
+            builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
          }
         };
 
