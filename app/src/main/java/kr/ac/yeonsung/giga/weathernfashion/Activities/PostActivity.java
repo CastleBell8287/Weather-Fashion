@@ -50,6 +50,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Array;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -290,7 +293,12 @@ public class PostActivity extends AppCompatActivity {
                 lon=0-convertToDegree(attrLONGITUDE);
             }
         }
-        postMethods.getWeatherNow_post(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd"));
+        if(attrDate.contains(today)){
+            postMethods.getWeatherNow_post(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
+        }else{
+            postMethods.getWeatherNow_post2(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
+        }
     }
 
     private String getRealPathFromURI(Uri uri){
@@ -447,6 +455,8 @@ public void setPost(){
     }else if(b){
         api.getToast(this,"이미지를 업로드해주세요.");
     }else if(post_categories.size() == 0){
+        post_categories.add("미니멀");
+        post_categories.add("캐주얼");
         api.getToast(this,"카테고리를 선택해주세요.");
     }else {
 
