@@ -1,8 +1,11 @@
 package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -38,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
@@ -57,8 +61,9 @@ public class PostViewFragment extends Fragment {
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("post");
     StorageReference riversRef2 = storageRef.child("profile");
-    String user_id;
+    String user_id, post_id;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    AlertDialog.Builder builder;
     RecyclerView.Adapter adapter_list;
     RecyclerView recyclerView;
     ArrayList<String> category_list = new ArrayList<>();
@@ -66,7 +71,7 @@ public class PostViewFragment extends Fragment {
     HashMap<String,Boolean> hash = new HashMap<>();
     String id;
     TextView view_user_name,view_title,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
-    ImageView view_image,like;
+    ImageView view_image,like, delete_post;
     CircleImageView user_profile;
     public static final String LOCAL_BROADCAST = "com.xfhy.casualweather.LOCAL_BROADCAST";
     // TODO: Rename parameter arguments, choose names that match
@@ -129,6 +134,7 @@ public class PostViewFragment extends Fragment {
         view_location = view.findViewById(R.id.view_location);
         likecount = view.findViewById(R.id.likecount);
         like = view.findViewById(R.id.like);
+        delete_post = view.findViewById(R.id.delete_post);
         view_date = view.findViewById(R.id.view_date);
         view_now_date = view.findViewById(R.id.view_now_date);
         view_content = view.findViewById(R.id.view_content);
@@ -137,7 +143,7 @@ public class PostViewFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         Bundle bundle = getArguments();
         id = bundle.getString("id");
-
+        delete_post.setOnClickListener(deleteListener);
 
 
 
@@ -213,6 +219,14 @@ public class PostViewFragment extends Fragment {
 
                         }
                     });
+                    String post_user_id_str = snapshot.child("post_user_id").getValue().toString();
+
+                    if(post_user_id_str.equals(user.getUid())){
+                        delete_post.setVisibility(View.VISIBLE);
+                    }else{
+                        delete_post.setVisibility(View.GONE);
+                    }
+                    post_id = snapshot.getKey();
                     view_user_name.setText(snapshot.child("post_user_name").getValue().toString());
                     view_title.setText(snapshot.child("post_title").getValue().toString());
                     view_temp.setText(snapshot.child("post_temp").getValue().toString()+"º");
@@ -292,6 +306,37 @@ public class PostViewFragment extends Fragment {
                         .replace(R.id.main_ly, myInfoFragment)
                         .commit();
             }
+        }
+    };
+
+    View.OnClickListener deleteListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("글을 삭제하시겠습니까?");
+
+            builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    FragmentManager fm = ((MainActivity) getContext()).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction;
+                    PostFragment postFragment = new PostFragment();
+                    fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.addToBackStack(null)
+                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                            .replace(R.id.main_ly, postFragment)
+                            .commit();
+                        mDatabase.child("post").child(post_id).removeValue();
+                }
+            });
+            builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
     };
 
