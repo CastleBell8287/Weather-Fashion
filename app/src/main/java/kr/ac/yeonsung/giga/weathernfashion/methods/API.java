@@ -74,7 +74,7 @@ public class API {
 
             String provider = LocationManager.NETWORK_PROVIDER;
             Location location = lm.getLastKnownLocation(provider);
-
+//
             lon = location.getLongitude();
             lat = location.getLatitude();
 
@@ -95,8 +95,7 @@ public class API {
         try {
             //서울시청의 위도와 경도이지만 핸드폰 위경도로 받을 수 있게 수정해야해요!
             getGpsLocation(activity);
-//            lon = 126.842892677;
-//            lat = 37.653102738;
+
             //OpenAPI call하는 URL
 //            https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
             URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon
@@ -463,7 +462,7 @@ public class API {
     }
 
 
-    class LatXLngY
+    static class LatXLngY
     {
         public double lat;
         public double lng;
