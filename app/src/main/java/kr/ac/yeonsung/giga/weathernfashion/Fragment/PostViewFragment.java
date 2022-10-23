@@ -19,12 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -50,6 +53,7 @@ import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.CategoryAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
+import kr.ac.yeonsung.giga.weathernfashion.methods.PostMethods;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,9 +76,11 @@ public class PostViewFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
     HashMap<String,Boolean> hash = new HashMap<>();
     String id;
+    EditText reply_edit;
     TextView view_user_name,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
-    ImageView view_image,like, delete_post, chat_image;
+    ImageView reply_btn, view_image,like, delete_post, chat_image;
     CircleImageView user_profile;
+    PostMethods postMethods = new PostMethods();
     public static final String LOCAL_BROADCAST = "com.xfhy.casualweather.LOCAL_BROADCAST";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -141,6 +147,8 @@ public class PostViewFragment extends Fragment {
         view_now_date = view.findViewById(R.id.view_now_date);
         view_content = view.findViewById(R.id.view_content);
         view_image = view.findViewById(R.id.view_image);
+        reply_edit = view.findViewById(R.id.reply_edit);
+        reply_btn = view.findViewById(R.id.reply_btn);
         user_profile = view.findViewById(R.id.user_profile);
         recyclerView.setLayoutManager(layoutManager);
         Bundle bundle = getArguments();
@@ -234,16 +242,16 @@ public class PostViewFragment extends Fragment {
                     post_id = snapshot.getKey();
                     view_user_name.setText(snapshot.child("post_user_name").getValue().toString());
                     view_temp.setText(snapshot.child("post_temp").getValue().toString()+"º");
-                    view_maxtemp.setText(snapshot.child("post_max_temp").getValue().toString());
-                    view_mintemp.setText(snapshot.child("post_min_temp").getValue().toString());
+                    view_maxtemp.setText(snapshot.child("post_max_temp").getValue().toString()+"º");
+                    view_mintemp.setText(snapshot.child("post_min_temp").getValue().toString()+"º");
                     view_location.setText(snapshot.child("post_location").getValue().toString());
-                    view_maxtemp.setText(snapshot.child("post_max_temp").getValue().toString());
                     likecount.setText(snapshot.child("post_likeCount").getValue().toString());
                     view_date.setText(sdf2.format(date));
                     view_now_date.setText(sdf2.format(date2));
                     user_id = snapshot.child("post_user_id").getValue().toString();
                     user_profile.setOnClickListener(clickListener);
                     view_user_name.setOnClickListener(clickListener);
+                    reply_btn.setOnClickListener(clickListener);
                     category_list = (ArrayList<String>) snapshot.child("post_categories").getValue();
                     adapter_list = new CategoryAdapter(getContext(),category_list);
                     recyclerView.setAdapter(adapter_list);
@@ -294,6 +302,22 @@ public class PostViewFragment extends Fragment {
     View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
+            if(view.getId() == R.id.reply_btn){
+                String user_name = "";
+                mDatabase.child("users").child(user_id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        user_name = snapshot.child("user_name").getValue().toString();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                postMethods.setPostTempReply(user_id, post_id, reply_edit.getText().toString(), user_name);
+            }
             if(!user_id.equals(user.getUid())) {
                 Bundle result = new Bundle();
                 result.putString("id", user_id);

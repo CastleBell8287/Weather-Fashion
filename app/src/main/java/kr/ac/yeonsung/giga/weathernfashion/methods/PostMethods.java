@@ -11,8 +11,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -38,6 +45,8 @@ import java.util.Date;
 import java.util.IntSummaryStatistics;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import kr.ac.yeonsung.giga.weathernfashion.VO.TempReply;
 
 
 public class PostMethods extends Activity {
@@ -67,6 +76,8 @@ public class PostMethods extends Activity {
 
     private final StorageReference reference = FirebaseStorage.getInstance().getReference();
 //    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     private void uploadImageToFirebase(Uri uri) {
         StorageReference fileRef = reference.child("사진아이디"+".jpg");
@@ -260,73 +271,14 @@ public class PostMethods extends Activity {
         }
 
     }
-    public void getWeatherNow_post(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
-        try {
-            time = time.replaceFirst(":", "-");
-            time = time.replaceFirst(":", "-");
+    public void setPostTempReply(String user_id, String post_id, String content, String user_name){
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime date = LocalDateTime.now();
+        String time = date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"));
 
-            Date dateformat = sdf.parse(time);
-
-            long timestamp = dateformat.getTime();
-
-            System.out.println("데이트 파스 : "+timestamp);
-            URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+lat_post+"&lon="+lon_post
-                    +"&lang=kr&dt="+timestamp+"&appid=623ffab3e9d338b9916bd0b0e33d5d87&units=metric");
-            BufferedReader bf;
-            String line;
-            String result="";
-
-            //날씨 정보를 받아온다.
-            bf = new BufferedReader(new InputStreamReader(url.openStream()));
-
-            //버퍼에 있는 정보를 문자열로 변환.
-            while((line=bf.readLine())!=null){
-                result=result.concat(line+"\n");
-            }
-            System.out.println(result);
-            //문자열을 JSON으로 파싱
-            JSONObject jsonObj = new JSONObject(result);
-            JSONObject main = jsonObj.getJSONObject("main");
-            JSONArray weather = jsonObj.getJSONArray("weather");
-            JSONObject wind = jsonObj.getJSONObject("wind");
-            JSONObject clouds = jsonObj.getJSONObject("clouds");
-            JSONObject weatherdesc = weather.getJSONObject(0);
-
-            String temp_str;
-            String min_temp;
-            String max_temp;
-            if (main.getString("temp").contains(".")) {
-                int temp_idx = main.getString("temp").indexOf(".");
-                temp_str = main.getString("temp").substring(0,temp_idx);
-            } else {
-                temp_str = main.getString("temp");
-            }
-            if (main.getString("temp_min").contains(".")) {
-                int min_temp_idx = main.getString("temp_min").indexOf(".");
-                min_temp = main.getString("temp_min").substring(0,min_temp_idx);  // 소수점 첫째 자리까지만 출력
-            } else{
-                min_temp = main.getString("temp_min");
-            }
-
-            if (main.getString("temp_max").contains(".")) {
-                int max_temp_idx = main.getString("temp_max").indexOf(".");
-                max_temp = main.getString("temp_max").substring(0,max_temp_idx);  // 소수점 첫째 자리까지만 출력
-            } else{
-                max_temp = main.getString("temp_max");
-            }
-            mintemp.setText(min_temp);
-            maxtemp.setText(max_temp);
-            temp.setText(temp_str);
-            date.setText(time);
-            date.setVisibility(View.VISIBLE);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+        TempReply tempReply = new TempReply(post_id, content, user_id, time, user_name);
+        databaseReference.child("TempReply").push().setValue(tempReply);
     }
-
     public void getWeatherNow_post2(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
         try {
 
