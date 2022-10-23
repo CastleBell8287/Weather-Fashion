@@ -173,7 +173,7 @@ public class API {
         }
 
     }
-    public void getWeatherList(Activity activity, String adLevel1, String adLevel2, TextView mintemp, TextView maxtemp){
+    public void getWeatherList(Activity activity, String adLevel1, String adLevel2, TextView mintemp, TextView maxtemp, String mint, String maxt){
         ArrayList<Weather> timeDataList= new ArrayList<Weather>();
         Weather timeData = null;
         ArrayList<Integer> temp = new ArrayList<Integer>();
@@ -296,11 +296,13 @@ public class API {
             System.out.println(Collections.max(temp));
             System.out.println(Collections.min(temp));
             System.out.println(temp);
-
+            mint = Collections.min(temp).toString();
+            maxt = Collections.max(temp).toString();
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mintemp.setText(Collections.min(temp)+"°");
+
                     maxtemp.setText(Collections.max(temp)+"°");
                 }
             });
@@ -313,135 +315,6 @@ public class API {
         }
     }
 
-    public void getWeatherList(Activity activity, TextView mintemp, TextView maxtemp){
-        ArrayList<Weather> timeDataList= new ArrayList<Weather>();
-        Weather timeData = null;
-        ArrayList<Integer> temp = new ArrayList<Integer>();
-        ArrayList<String> tmx = new ArrayList<String>();
-        ArrayList<String> tmn = new ArrayList<String>();
-        ArrayList<String> sky = new ArrayList<String>();
-        ArrayList<String> pty = new ArrayList<String>();
-//        ArrayList<String> time = null;
-
-        try {
-            if(lon<0) {
-                lon *= -1;
-            } else {
-                lon *= 1;
-            }
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            DateFormat df = new SimpleDateFormat("yyyyMMdd");
-            date2 = df.format(cal.getTime()) ;
-            System.out.println("current: " + df.format(cal.getTime()));
-            cal.add(Calendar.DATE, -1);
-            System.out.println("after: " + df.format(cal.getTime()));
-            String date = df.format(cal.getTime()).toString();
-
-            LatXLngY tmp = convertGRID_GPS(TO_GRID, lat, lon);
-
-            String latText = String.valueOf(tmp.x);
-            String lonText = String.valueOf(tmp.y);
-
-            int latindex = latText.indexOf(".");
-            int lonindex = lonText.indexOf(".");
-
-            latText = latText.substring(0,latindex);
-            lonText = lonText.substring(0,lonindex);
-
-            System.out.println("lat : "+ latText);
-            System.out.println("lon : "+ lonText);
-
-            StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
-            urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=jMWjbP9YhgZtze0FB7Z53iwbcJQe%2FhlgQeZ%2FgG1bJIjulGTrATjO4xDFruA9Pql8MzR41ldgbX6gHD4dr2Gmww%3D%3D"); /*Service Key*/
-            urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8")); /*한 페이지 결과 수*/
-            urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
-            urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); /*‘21년 6월 28일발표*/
-            urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode("2300", "UTF-8")); /*05시 발표*/
-            urlBuilder.append("&" + URLEncoder.encode("nx","UTF-8") + "=" + URLEncoder.encode(latText, "UTF-8")); /*예보지점의 X 좌표값*/
-            urlBuilder.append("&" + URLEncoder.encode("ny","UTF-8") + "=" + URLEncoder.encode(lonText, "UTF-8")); /*예보지점의 Y 좌표값*/
-            System.out.println(urlBuilder.toString());
-            URL url = new URL(urlBuilder.toString());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Content-type", "application/json");
-            System.out.println("Response code: " + conn.getResponseCode());
-            BufferedReader rd;
-            if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            } else {
-                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-            }
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = rd.readLine()) != null) {
-                sb.append(line);
-            }
-            cal.add(Calendar.DATE, 1);
-            date = df.format(cal.getTime()).toString();
-
-            JSONObject jsonObj = new JSONObject(sb.toString());
-            JSONObject response = (JSONObject) jsonObj.get("response");
-            JSONObject body = (JSONObject) response.get("body");
-
-            JSONObject items = (JSONObject) body.get("items");
-            JSONArray item = (JSONArray) items.get("item");
-            System.out.println(item);
-            JSONObject jsonEx;
-            //필요한 데이터만 가져오기 위해 먼저 sky, pty, tmep 등을 ArrayList로 선언하고
-            //반복을 돌려서 우리가 원하는 조건에 맞다면 ArrayList에 add()
-            //시간까지 확인하고 싶지만 그럴 경우 반복문만 16000번 돌아가서 그게 별로인 것 같음
-            //800번만 반복을 돌리는 대신 어차피 json에 저장되어 있는 시간 정보 순으로 반복이 돌아가서
-            //그것을 믿기로 했다
-            for(int i = 0; i < item.length(); i++) {
-                jsonEx = (JSONObject) item.get(i);
-                if (jsonEx.get("fcstDate").equals(date)) {
-                    switch (jsonEx.get("category").toString()){
-                        case "TMP":
-                            temp.add(Integer.parseInt(jsonEx.get("fcstValue").toString()));
-                            break;
-                        case "SKY":
-                            sky.add(jsonEx.get("fcstValue").toString());
-                            break;
-                        case "PTY":
-                            pty.add(jsonEx.get("fcstValue").toString());
-                            break;
-                        case "TMN":
-                            if (jsonEx.get("fcstTime").equals("0600")){
-                                tmn.add(jsonEx.get("fcstValue").toString());
-                            }
-
-                            break;
-                        case "TMX":
-                            if(jsonEx.get("fcstTime").equals("1500")){
-                                tmx.add(jsonEx.get("fcstValue").toString());
-                            }
-
-                            break;
-                    }
-                }
-            }
-
-            System.out.println(Collections.max(temp));
-            System.out.println(Collections.min(temp));
-            System.out.println(temp);
-
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mintemp.setText(Collections.min(temp));
-                    maxtemp.setText(Collections.max(temp));
-                }
-            });
-            rd.close();
-            conn.disconnect();
-
-        }catch(Exception e) {}
-        finally {
-
-        }
-    }
 
     public void getToast(Activity activity, String str){
         Toast.makeText(activity,str,Toast.LENGTH_SHORT).show();

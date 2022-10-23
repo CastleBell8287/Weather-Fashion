@@ -56,6 +56,7 @@ public class HomeFragment extends Fragment{
     UserMethods userMethods = new UserMethods();
     ArrayList<String> morning = new ArrayList<>(Arrays.asList("07","08","09","10","11","12","13","14","15","16","17","18"));
     ArrayList<String> night = new ArrayList<>(Arrays.asList("00","01","02","03","04","05","06","19","20","21","22","23"));
+    String mint_str, maxt_str;
     API api = new API();
     RecyclerView.Adapter adapter;
     ImageView weather_icon;
@@ -65,7 +66,7 @@ public class HomeFragment extends Fragment{
     RecyclerView.Adapter rank_adapter;
     RecyclerView rank_recyclerView;
     String dateNow;
-
+    Long mint, maxt;
     DateFormat df = new SimpleDateFormat("yyyyMMdd");
     TextView nowTemp; //현재 온도
     TextView nowWeather; //현재 날씨
@@ -194,9 +195,12 @@ public class HomeFragment extends Fragment{
                         @Override
                         public void run() {
                             api.getMyAddress(si,gu,dong);
-                            api.getWeatherList(getActivity(),si.getText().toString(), gu.getText().toString(), min_temp,max_temp);
+                            api.getWeatherList(getActivity(),si.getText().toString(), gu.getText().toString(), min_temp,max_temp, mint_str, maxt_str);
                             getDailyWeather();
+                            mint_str = min_temp.getText().toString().substring(0,min_temp.getText().toString().lastIndexOf("°"));
+                            maxt_str = max_temp.getText().toString().substring(0,max_temp.getText().toString().lastIndexOf("°"));
                             loadingDialog.dismiss();
+                            getPostRank();
                         }
                     });
 
@@ -214,7 +218,7 @@ public class HomeFragment extends Fragment{
 
     public void setCode(){
         weatherCodeStr = weatherCode.getText().toString();
-        getPostRank();
+
     }
 
     // 버튼 리스너 (로그아웃, 위치 날씨 설정)
@@ -234,7 +238,7 @@ public class HomeFragment extends Fragment{
                         public void run() {
                             try {
                                 api.getWeatherNow(getActivity(), weather_icon,nowTemp, nowWeather, si, gu, dong, feel_temp, humidity, wind_speed, cloud, weatherCode);
-                                api.getWeatherList(getActivity(), si.getText().toString(), gu.getText().toString(), min_temp, max_temp);
+                                api.getWeatherList(getActivity(), si.getText().toString(), gu.getText().toString(), min_temp, max_temp, mint_str, maxt_str);
                                 api.getMyAddress(si,gu,dong);// 이 위치가 아니면 메소드가 실행이 안됩니다 list2에 값은 저장되는데 이 스레드 밖으로 나가면 사라져요 이걸 해결해야할 것 같습니다
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -247,62 +251,37 @@ public class HomeFragment extends Fragment{
         }
     };
     public void getPostRank(){
-        mDatabase.child("post").addListenerForSingleValueEvent(new ValueEventListener() {
+
+        mDatabase.child("post").orderByChild("post_likeCount").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot document : snapshot.getChildren()){
-                    Query myTopPostsQuery = mDatabase.child("post").orderByChild("post_likeCount");
-                    myTopPostsQuery.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            rank_list.clear();
-                            for (DataSnapshot document : snapshot.getChildren()) {
-//                                if (document.child("post_max_temp").getValue().toString() == max_temp.toString() || document.child("post_min_temp").getValue().toString() == min_temp.toString())
-//                                {
-//                                    String postTitle = document.child("post_title").getValue().toString();
-//                                    String postImage = document.child("post_image").getValue().toString();
-//                                    String postMax = document.child("post_max_temp").getValue().toString();
-//                                    String postMin = document.child("post_min_temp").getValue().toString();
-//                                    PostRank postRank = new PostRank(postImage, postTitle,postMax,postMin);
-//                                    rank_list.add(postRank);
-//
-//                                }
-                                long mint = Long.parseLong(min_temp.getText().toString().substring(0,min_temp.getText().toString().lastIndexOf("°")));
-                                long maxt = Long.parseLong(max_temp.getText().toString().substring(0,max_temp.getText().toString().lastIndexOf("°")));
+                rank_list.clear();
+                for (DataSnapshot document : snapshot.getChildren()) {
+                    System.out.println(document.getValue());
 
-                                long postmin = Long.parseLong(document.child("post_min_temp").getValue().toString());
-                                long postmax = Long.parseLong(document.child("post_max_temp").getValue().toString());
+                    System.out.println("민 : " + mint_str);
+                    System.out.println("맥스 : " + maxt_str);
 
-                                if((mint==postmin-1 || mint==postmin || mint==postmin+1) && (maxt==postmax-1 || maxt==postmax || maxt==postmax+1)) {
-                                    System.out.println(mint);
-                                    System.out.println(maxt);
-                                    System.out.println(postmin);
-                                    System.out.println(postmax);
-                                    String postImage = document.child("post_image").getValue().toString();
-                                    String postlike = document.child("post_likeCount").getValue().toString();
-                                    String postMax = document.child("post_max_temp").getValue().toString();
-                                    String postMin = document.child("post_min_temp").getValue().toString();
-                                    String post_id = document.getKey();
-                                    PostRank postRank = new PostRank(postImage, postMax, postMin, postlike, post_id);
-                                    rank_list.add(postRank);
-                                }
-                            }
-                            Collections.reverse(rank_list);
-                            rank_adapter.notifyDataSetChanged();
-                        }
+                    long postmin = Long.parseLong(document.child("post_min_temp").getValue().toString());
+                    long postmax = Long.parseLong(document.child("post_max_temp").getValue().toString());
+                    long mint = Long.parseLong(mint_str);
+                    long maxt = Long.parseLong(maxt_str);
+                    if ((mint == postmin - 1 || mint == postmin || mint == postmin + 1) && (maxt == postmax - 1 || maxt == postmax || maxt == postmax + 1)) {
+                        String postImage = document.child("post_image").getValue().toString();
+                        String postlike = document.child("post_likeCount").getValue().toString();
+                        String postMax = document.child("post_max_temp").getValue().toString();
+                        String postMin = document.child("post_min_temp").getValue().toString();
+                        String post_id = document.getKey();
+                        PostRank postRank = new PostRank(postImage, postMax, postMin, postlike, post_id);
+                        rank_list.add(postRank);
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                    rank_adapter = new PostRankAdapter(getContext(), rank_list);
-                    rank_recyclerView.setAdapter(rank_adapter);
+                Collections.reverse(rank_list);
                 }
-
-
-            }
-
+            rank_adapter =new PostRankAdapter(getContext(),rank_list);
+             rank_adapter.notifyDataSetChanged();
+            rank_recyclerView.setAdapter(rank_adapter);
+        }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
