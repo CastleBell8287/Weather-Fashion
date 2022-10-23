@@ -49,14 +49,14 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:layout_marginLeft="-25dp">
-                     <TextView
-                    android:id="@+id/si"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center" android:layout_marginRight="3dp"
-                    android:textColor="#d9d9de"
-                    android:text="시"
-                    android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/si"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" android:layout_marginRight="3dp"
+                        android:textColor="#d9d9de"
+                        android:text="시"
+                        android:textSize="18sp" />
                     <TextView
                         android:id="@+id/gu"
                         android:layout_width="wrap_content"
@@ -154,8 +154,8 @@
                                     android:text="체감" />
                             </LinearLayout>
                         </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -172,88 +172,88 @@
                             android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/weather_code"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#d9d9de"
+                android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/SubLayout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_morning"
                 android:gravity="center"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/weather_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#d9d9de"
-                    android:visibility="gone" />
+
+                android:orientation="horizontal">
                 <LinearLayout
-                    android:id="@+id/SubLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@drawable/bg_morning"
-                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/humidity_icon2" />
+                    <TextView
+                        android:id="@+id/now_humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#d9d9de"
+                        android:layout_marginLeft="3dp"
+                        android:text="습도"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/humidity_icon2" />
-                        <TextView
-                            android:id="@+id/now_humidity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="#d9d9de"
-                            android:layout_marginLeft="3dp"
-                            android:text="습도"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/cloud" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/cloud" />
+                    <TextView
+                        android:id="@+id/now_cloud"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#d9d9de"
+                        android:text="구름" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-                        <TextView
-                            android:id="@+id/now_cloud"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:textColor="#d9d9de"
-                            android:text="구름" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/wind_speed2" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/wind_speed2" />
-
-                        <TextView
-                            android:id="@+id/wind_speed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="#d9d9de"
-                            android:layout_marginLeft="5dp"
-                            android:text="풍속" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/wind_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#d9d9de"
+                        android:layout_marginLeft="5dp"
+                        android:text="풍속" />
                 </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -269,6 +269,14 @@
                 android:layout_marginTop="10dp"
                 android:scrollbars="vertical" />
         </LinearLayout>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="오늘 추천 패션"
+            android:textSize="20sp"
+            android:textColor="#d9d9de"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rank_recyclerView"
             android:layout_width="match_parent"
