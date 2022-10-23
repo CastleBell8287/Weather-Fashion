@@ -248,8 +248,8 @@ public class PostMethods extends Activity {
             int max_temp_idx = tmx.get(0).indexOf(".");
             int min_temp_idx = tmn.get(0).indexOf(".");
 
-            mintemp.setText(tmn.get(0).substring(0, min_temp_idx)+"º");
-            maxtemp.setText(tmx.get(0).substring(0, max_temp_idx)+"º");
+            mintemp.setText(tmn.get(0).substring(0, min_temp_idx)+"°");
+            maxtemp.setText(tmx.get(0).substring(0, max_temp_idx)+"°");
             temp.setText(tempStr.substring(0, temp_idx));
             date.setText(time);
             date.setVisibility(View.VISIBLE);
@@ -316,8 +316,8 @@ public class PostMethods extends Activity {
             } else{
                 max_temp = main.getString("temp_max");
             }
-            mintemp.setText(min_temp+"º");
-            maxtemp.setText(max_temp+"º");
+            mintemp.setText(min_temp+"°");
+            maxtemp.setText(max_temp+"°");
             temp.setText(temp_str);
             date.setText(time);
             date.setVisibility(View.VISIBLE);
@@ -393,8 +393,8 @@ public class PostMethods extends Activity {
             } else{
                 max_temp = map2.get("minTa").toString();
             }
-            mintemp.setText(min_temp+"º");
-            maxtemp.setText(max_temp+"º");
+            mintemp.setText(min_temp+"°");
+            maxtemp.setText(max_temp+"°");
             temp.setText(temp_str);
             date.setText(time);
             date.setVisibility(View.VISIBLE);

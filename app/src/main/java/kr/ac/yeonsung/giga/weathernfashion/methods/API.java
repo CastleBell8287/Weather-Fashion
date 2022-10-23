@@ -152,8 +152,8 @@ public class API {
                 @Override
                 public void run() {
                     try {
-                        nowTemp.setText(temp+"º");
-                        feeltemp.setText(feel_temp+"º");
+                        nowTemp.setText(temp+"°");
+                        feeltemp.setText(feel_temp+"°");
                         humidity.setText(humidity_str+"%");
                         cloud.setText(cloud_str+"%");
                         wind_speed.setText(wind_speed_str+"㎧");
@@ -295,8 +295,8 @@ public class API {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mintemp.setText(tmn.get(0).substring(0,tmn.get(0).lastIndexOf("."))+"º");
-                    maxtemp.setText(tmx.get(0).substring(0,tmx.get(0).lastIndexOf("."))+"º");
+                    mintemp.setText(tmn.get(0).substring(0,tmn.get(0).lastIndexOf("."))+"°");
+                    maxtemp.setText(tmx.get(0).substring(0,tmx.get(0).lastIndexOf("."))+"°");
                 }
             });
             rd.close();

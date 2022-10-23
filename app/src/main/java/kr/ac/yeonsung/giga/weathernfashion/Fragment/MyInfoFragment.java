@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.PostActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.MyInfoAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
@@ -79,7 +82,7 @@ public class MyInfoFragment extends Fragment {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private Uri imageUri = null;
     TextView myname, mycomment, back_pressed;
-    ImageView setting;
+    ImageView setting, chat_image;
     CircleImageView myprofile;
     Button post_write_btn;
     Button btn_modify;
@@ -141,11 +144,13 @@ public class MyInfoFragment extends Fragment {
         post_write_btn = view.findViewById(R.id.post_write_btn);
         post_write_btn.setOnClickListener(btnListener);
         btn_modify = view.findViewById(R.id.btn_modify);
+        chat_image = view.findViewById(R.id.chat_image);
         btn_modify.setOnClickListener(btnListener_m);
         recyclerView = view.findViewById(R.id.myinfo_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(layoutManager);
+        chat_image.setOnClickListener(btnListener);
         setProfile();
         getMyPostList();
         // Inflate the layout for this fragment
@@ -161,6 +166,15 @@ public class MyInfoFragment extends Fragment {
                     startActivity(intent2);
                     intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     break;
+                case R.id.chat_image:
+                    FragmentManager fm = ((MainActivity) getContext()).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction;
+                    ChatListFragment chatFragment = new ChatListFragment();
+                    fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.addToBackStack(null)
+                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                            .replace(R.id.main_ly, chatFragment)
+                            .commit();
             }
         }
 

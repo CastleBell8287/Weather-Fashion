@@ -51,6 +51,13 @@
             android:visibility="gone"
             android:src="@drawable/ic_baseline_delete_24"
             />
+            <ImageView
+                android:id="@+id/chat_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:src="@drawable/ic_baseline_chat_24"
+                />
     </LinearLayout>
     </LinearLayout>
     <LinearLayout

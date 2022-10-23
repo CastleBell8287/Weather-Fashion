@@ -257,15 +257,25 @@ public class HomeFragment extends Fragment{
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             rank_list.clear();
                             for (DataSnapshot document : snapshot.getChildren()) {
-                                if (Long.parseLong(document.child("post_now_date").getValue().toString())>=Long.parseLong(date3+"000000")
-                                        && Long.parseLong(document.child("post_now_date").getValue().toString())<=Long.parseLong(date3+"999999")
-                                ) {
-                                    String postTitle = document.child("post_title").getValue().toString();
-                                    String postImage = document.child("post_image").getValue().toString();
-                                    PostRank postRank = new PostRank(postImage, postTitle);
-                                    rank_list.add(postRank);
-                                }
-                                }
+                                System.out.println(document.child("post_max_temp").getValue().toString()+"123");
+                                System.out.println(max_temp.getText().toString()+"456");
+//                                if (document.child("post_max_temp").getValue().toString() == max_temp.toString() || document.child("post_min_temp").getValue().toString() == min_temp.toString())
+//                                {
+//                                    String postTitle = document.child("post_title").getValue().toString();
+//                                    String postImage = document.child("post_image").getValue().toString();
+//                                    String postMax = document.child("post_max_temp").getValue().toString();
+//                                    String postMin = document.child("post_min_temp").getValue().toString();
+//                                    PostRank postRank = new PostRank(postImage, postTitle,postMax,postMin);
+//                                    rank_list.add(postRank);
+//
+//                                }
+                                String postTitle = document.child("post_title").getValue().toString();
+                                String postImage = document.child("post_image").getValue().toString();
+                                String postMax = document.child("post_max_temp").getValue().toString();
+                                String postMin = document.child("post_min_temp").getValue().toString();
+                                PostRank postRank = new PostRank(postImage, postTitle,postMax,postMin);
+                                rank_list.add(postRank);
+                            }
                             Collections.reverse(rank_list);
                             rank_adapter.notifyDataSetChanged();
                         }

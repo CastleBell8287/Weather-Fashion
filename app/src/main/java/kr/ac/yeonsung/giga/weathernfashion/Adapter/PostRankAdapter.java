@@ -41,7 +41,7 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView rank;
+        TextView rank,max,min;
         ImageView rank_icon;
 
         public ViewHolder(View itemView) {
@@ -51,7 +51,8 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
             rank = itemView.findViewById(R.id.rank);
             imageView = itemView.findViewById(R.id.imageView);
             rank_icon = itemView.findViewById(R.id.rank_icon);
-
+            max = itemView.findViewById(R.id.max_temp_home);
+            min = itemView.findViewById(R.id.min_temp_home);
         }
     }
 
@@ -62,7 +63,7 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
     @Override
-    public PostRankAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_rank_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
 
@@ -71,11 +72,14 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
 
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
-    public void onBindViewHolder(PostRankAdapter.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(ViewHolder holder, int position) {
         String image_str = mData.get(position).getImage();
+        String post_max_home = mData.get(position).getMax_temp();
+        String post_min_home = mData.get(position).getMin_temp();
 
         holder.rank.setText(String.valueOf(position+1));
+        holder.max.setText(post_max_home);
+        holder.min.setText(post_min_home);
 
         riversRef.child(image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -88,6 +92,7 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
             public void onFailure(@NonNull Exception exception) {
             }
         });
+
 
         if(holder.rank.getText().equals("1")) {
             holder.rank_icon.setImageResource(R.drawable.rank1);

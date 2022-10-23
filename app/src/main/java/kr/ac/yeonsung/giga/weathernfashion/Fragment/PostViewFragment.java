@@ -2,6 +2,7 @@ package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import kr.ac.yeonsung.giga.weathernfashion.Activities.ChatActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.CategoryAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
@@ -71,7 +73,7 @@ public class PostViewFragment extends Fragment {
     HashMap<String,Boolean> hash = new HashMap<>();
     String id;
     TextView view_user_name,view_title,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
-    ImageView view_image,like, delete_post;
+    ImageView view_image,like, delete_post, chat_image;
     CircleImageView user_profile;
     public static final String LOCAL_BROADCAST = "com.xfhy.casualweather.LOCAL_BROADCAST";
     // TODO: Rename parameter arguments, choose names that match
@@ -134,6 +136,7 @@ public class PostViewFragment extends Fragment {
         view_location = view.findViewById(R.id.view_location);
         likecount = view.findViewById(R.id.likecount);
         like = view.findViewById(R.id.like);
+        chat_image = view.findViewById(R.id.chat_image);
         delete_post = view.findViewById(R.id.delete_post);
         view_date = view.findViewById(R.id.view_date);
         view_now_date = view.findViewById(R.id.view_now_date);
@@ -143,6 +146,7 @@ public class PostViewFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         Bundle bundle = getArguments();
         id = bundle.getString("id");
+        chat_image.setOnClickListener(chatListener);
         delete_post.setOnClickListener(deleteListener);
 
 
@@ -223,8 +227,10 @@ public class PostViewFragment extends Fragment {
 
                     if(post_user_id_str.equals(user.getUid())){
                         delete_post.setVisibility(View.VISIBLE);
+                        chat_image.setVisibility(View.GONE);
                     }else{
                         delete_post.setVisibility(View.GONE);
+                        chat_image.setVisibility(View.VISIBLE);
                     }
                     post_id = snapshot.getKey();
                     view_user_name.setText(snapshot.child("post_user_name").getValue().toString());
@@ -260,6 +266,15 @@ public class PostViewFragment extends Fragment {
                     });
                 } catch (ParseException e) {
                     e.printStackTrace();
+                } catch (NullPointerException e){
+                    FragmentManager fm = ((MainActivity) getContext()).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction;
+                    PostFragment postFragment = new PostFragment();
+                    fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.addToBackStack(null)
+                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                            .replace(R.id.main_ly, postFragment)
+                            .commit();
                 }
 
             }
@@ -309,6 +324,15 @@ public class PostViewFragment extends Fragment {
         }
     };
 
+    View.OnClickListener chatListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getActivity(), ChatActivity.class);
+            intent.putExtra("id",user_id);
+            startActivity(intent);
+        }
+    };
+
     View.OnClickListener deleteListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -318,14 +342,6 @@ public class PostViewFragment extends Fragment {
             builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    FragmentManager fm = ((MainActivity) getContext()).getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction;
-                    PostFragment postFragment = new PostFragment();
-                    fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.addToBackStack(null)
-                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                            .replace(R.id.main_ly, postFragment)
-                            .commit();
                         mDatabase.child("post").child(post_id).removeValue();
                 }
             });

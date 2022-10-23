@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -20,12 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeathernFashion"
         android:usesCleartextTraffic="true">
-
         <activity
             android:name=".Activities.StartActivity"
-            android:hardwareAccelerated="true"
-            android:exported="true">
-
+            android:exported="true"
+            android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +34,10 @@
         <activity android:name=".Activities.LoginActivity" />
         <activity android:name=".Activities.JoinActivity" />
         <activity android:name=".Activities.PostActivity" />
-        <activity android:name=".Activities.PopupActivity" android:theme="@android:style/Theme.Material.Dialog.NoActionBar"/>
+        <activity android:name=".Activities.ChatActivity" />
+        <activity
+            android:name=".Activities.PopupActivity"
+            android:theme="@android:style/Theme.Material.Dialog.NoActionBar" />
     </application>
 
 </manifest>

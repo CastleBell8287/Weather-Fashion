@@ -1,5 +1,6 @@
 package kr.ac.yeonsung.giga.weathernfashion.Fragment;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import kr.ac.yeonsung.giga.weathernfashion.Activities.ChatActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.MyInfoAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.MyInfoList;
@@ -53,6 +55,7 @@ public class OtherInfoFragment extends Fragment {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     TextView othername, othercomment, back_pressed;
     String id;
+    ImageView chat_image;
     CircleImageView otherprofile;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -104,13 +107,14 @@ public class OtherInfoFragment extends Fragment {
         othername = view.findViewById(R.id.other_name);
         othercomment = view.findViewById(R.id.other_comment);
         otherprofile = view.findViewById(R.id.other_profile);
-
+        chat_image = view.findViewById(R.id.chat_image);
         recyclerView = view.findViewById(R.id.otherinfo_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(layoutManager);
         setProfile();
         getOtherPostList();
+        chat_image.setOnClickListener(chatListener);
         // Inflate the layout for this fragment
         return view;
     }
@@ -162,4 +166,13 @@ public class OtherInfoFragment extends Fragment {
             }
         });
     }
+
+    View.OnClickListener chatListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getActivity(), ChatActivity.class);
+            intent.putExtra("id",id);
+            startActivity(intent);
+        }
+    };
 }
