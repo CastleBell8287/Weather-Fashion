@@ -393,8 +393,8 @@ public class PostMethods extends Activity {
             } else{
                 max_temp = map2.get("minTa").toString();
             }
-            mintemp.setText(min_temp+"°");
-            maxtemp.setText(max_temp+"°");
+            mintemp.setText(min_temp);
+            maxtemp.setText(max_temp);
             temp.setText(temp_str);
             date.setText(time);
             date.setVisibility(View.VISIBLE);
