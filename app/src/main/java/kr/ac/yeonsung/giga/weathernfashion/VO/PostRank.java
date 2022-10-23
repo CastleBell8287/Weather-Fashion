@@ -2,7 +2,6 @@ package kr.ac.yeonsung.giga.weathernfashion.VO;
 
 public class PostRank {
     String image;
-    String title;
     String max_temp;
     String min_temp;
     String like;
@@ -40,17 +39,9 @@ public class PostRank {
         return min_temp;
     }
 
-    public String getTitle() {
-        return title;
-    }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public PostRank(String image, String title ,String max_temp, String min_temp, String like, String post_id) {
+    public PostRank(String image,String max_temp, String min_temp, String like, String post_id) {
         this.image = image;
-        this.title = title;
         this.max_temp = max_temp;
         this.min_temp = min_temp;
         this.like = like;

@@ -44,6 +44,7 @@ public class ChatListFragment extends Fragment {
     public String user_id, chat_id;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
+    Map.Entry<String, Boolean> pair;
     DatabaseReference mDatabase;
     Map<String, Boolean> hash = new HashMap<>();
     RecyclerView.Adapter adapter;
@@ -121,7 +122,6 @@ public class ChatListFragment extends Fragment {
                     hash = (HashMap<String, Boolean>) snapshot1.child("users").getValue();
                     if(hash.containsKey(user.getUid())) {
                         hash.remove(user.getUid());
-                        for (DataSnapshot snapshot2 : snapshot1.child("comments").getChildren()) {
                             for (Map.Entry<String, Boolean> pair : hash.entrySet()) {
                                 mDatabase.child("users").child(pair.getKey()).addValueEventListener(new ValueEventListener() {
                                     @Override
@@ -142,8 +142,6 @@ public class ChatListFragment extends Fragment {
 
                                     }
                                 });
-
-                            }
                         }
                     }
                 }

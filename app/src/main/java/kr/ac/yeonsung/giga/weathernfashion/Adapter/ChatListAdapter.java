@@ -32,6 +32,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.ChatActivity;
@@ -74,7 +75,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             user_id = itemView.findViewById(R.id.user_id);
             chatLinear = itemView.findViewById(R.id.chat_linear);
             user_profile = itemView.findViewById(R.id.user_profile);
-            chat_time = itemView.findViewById(R.id.chat_text);
+            chat_text = itemView.findViewById(R.id.chat_text);
             chat_time = itemView.findViewById(R.id.chat_time);
 
         }
@@ -104,6 +105,25 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         String chat_id = mData.get(position).getChat_id();
 
         System.out.println("챗아이디"+chat_id);
+
+        mDatabase.child("chatrooms").child(chat_id).child("comments").limitToLast(1).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    long unixTime = Long.parseLong(snapshot1.child("timestamp").getValue().toString());
+                    Date date = new Date(unixTime);
+                    System.out.println(snapshot1.child("message").getValue().toString());
+                    System.out.println(simpleDateFormat.format(date));
+                    holder.chat_time.setText(simpleDateFormat.format(date));
+                    holder.chat_text.setText(snapshot1.child("message").getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         System.out.println(user_id_str);
         System.out.println(user_profile_str);

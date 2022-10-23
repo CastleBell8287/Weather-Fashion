@@ -72,7 +72,7 @@ public class PostViewFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
     HashMap<String,Boolean> hash = new HashMap<>();
     String id;
-    TextView view_user_name,view_title,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
+    TextView view_user_name,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content;
     ImageView view_image,like, delete_post, chat_image;
     CircleImageView user_profile;
     public static final String LOCAL_BROADCAST = "com.xfhy.casualweather.LOCAL_BROADCAST";
@@ -129,7 +129,6 @@ public class PostViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recyclerView);
         view_user_name = view.findViewById(R.id.view_user_name);
-        view_title = view.findViewById(R.id.view_title);
         view_temp = view.findViewById(R.id.view_temp);
         view_maxtemp = view.findViewById(R.id.view_maxtemp);
         view_mintemp = view.findViewById(R.id.view_mintemp);
@@ -234,7 +233,6 @@ public class PostViewFragment extends Fragment {
                     }
                     post_id = snapshot.getKey();
                     view_user_name.setText(snapshot.child("post_user_name").getValue().toString());
-                    view_title.setText(snapshot.child("post_title").getValue().toString());
                     view_temp.setText(snapshot.child("post_temp").getValue().toString()+"º");
                     view_maxtemp.setText(snapshot.child("post_max_temp").getValue().toString());
                     view_mintemp.setText(snapshot.child("post_min_temp").getValue().toString());

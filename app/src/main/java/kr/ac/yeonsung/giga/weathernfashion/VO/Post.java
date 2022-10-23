@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Post {
-    private String post_title;
     private String post_content;
     private String post_image;
     private String post_user_name;
@@ -20,8 +19,7 @@ public class Post {
     private HashMap<String, Boolean> post_likes = new HashMap<>();
     private ArrayList<String> post_categories;
 
-    public Post(String post_title, String post_content, String post_image, String post_user_name, String post_min_temp, String post_max_temp,String post_temp, String post_location, String post_date, String post_now_date, Long post_likeCount, HashMap<String, Boolean> post_likes, ArrayList<String> post_categories,String post_user_id, String post_gender) {
-        this.post_title = post_title;
+    public Post(String post_content, String post_image, String post_user_name, String post_min_temp, String post_max_temp,String post_temp, String post_location, String post_date, String post_now_date, Long post_likeCount, HashMap<String, Boolean> post_likes, ArrayList<String> post_categories,String post_user_id, String post_gender) {
         this.post_content = post_content;
         this.post_image = post_image;
         this.post_user_name = post_user_name;
@@ -55,14 +53,6 @@ public class Post {
 
     public void setPost_user_id(String post_user_id) {
         this.post_user_id = post_user_id;
-    }
-
-    public String getPost_title() {
-        return post_title;
-    }
-
-    public void setPost_title(String post_title) {
-        this.post_title = post_title;
     }
 
     public String getPost_content() {

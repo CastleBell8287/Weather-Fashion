@@ -257,8 +257,6 @@ public class HomeFragment extends Fragment{
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             rank_list.clear();
                             for (DataSnapshot document : snapshot.getChildren()) {
-                                //System.out.println(document.child("post_max_temp").getValue().toString()+"123");
-                               // System.out.println(max_temp.getText().toString()+"456");
 //                                if (document.child("post_max_temp").getValue().toString() == max_temp.toString() || document.child("post_min_temp").getValue().toString() == min_temp.toString())
 //                                {
 //                                    String postTitle = document.child("post_title").getValue().toString();
@@ -269,14 +267,25 @@ public class HomeFragment extends Fragment{
 //                                    rank_list.add(postRank);
 //
 //                                }
-                                String postTitle = document.child("post_title").getValue().toString();
-                                String postImage = document.child("post_image").getValue().toString();
-                                String postlike = document.child("post_likeCount").getValue().toString();
-                                String postMax = document.child("post_max_temp").getValue().toString();
-                                String postMin = document.child("post_min_temp").getValue().toString();
-                                String post_id = document.getKey();
-                                PostRank postRank = new PostRank(postImage, postTitle,postMax,postMin,postlike,post_id);
-                                rank_list.add(postRank);
+                                long mint = Long.parseLong(min_temp.getText().toString().substring(0,min_temp.getText().toString().lastIndexOf("°")));
+                                long maxt = Long.parseLong(max_temp.getText().toString().substring(0,max_temp.getText().toString().lastIndexOf("°")));
+
+                                long postmin = Long.parseLong(document.child("post_min_temp").getValue().toString());
+                                long postmax = Long.parseLong(document.child("post_max_temp").getValue().toString());
+
+                                if((mint==postmin-1 || mint==postmin || mint==postmin+1) && (maxt==postmax-1 || maxt==postmax || maxt==postmax+1)) {
+                                    System.out.println(mint);
+                                    System.out.println(maxt);
+                                    System.out.println(postmin);
+                                    System.out.println(postmax);
+                                    String postImage = document.child("post_image").getValue().toString();
+                                    String postlike = document.child("post_likeCount").getValue().toString();
+                                    String postMax = document.child("post_max_temp").getValue().toString();
+                                    String postMin = document.child("post_min_temp").getValue().toString();
+                                    String post_id = document.getKey();
+                                    PostRank postRank = new PostRank(postImage, postMax, postMin, postlike, post_id);
+                                    rank_list.add(postRank);
+                                }
                             }
                             Collections.reverse(rank_list);
                             rank_adapter.notifyDataSetChanged();

@@ -75,9 +75,9 @@ public class PostActivity extends AppCompatActivity {
     StorageReference storageRef = storage.getReference();
     API api = new API();
     PostMethods postMethods = new PostMethods();
-    TextView back_to_post_main,post_done,temp,postlocation,postdate,choice_post_categotis
+    TextView post_done,temp,postlocation,postdate,choice_post_categotis
             ,choice_post_categotis2,post_selected_category,mintemp,maxtemp;
-    EditText post_title,post_main_text;
+    EditText post_main_text;
     ImageView post_img;
     List<String> mSelectedItems;
     AlertDialog.Builder builder;
@@ -100,9 +100,7 @@ public class PostActivity extends AppCompatActivity {
         g = new Geocoder(this);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         setContentView(R.layout.activity_post);
-        back_to_post_main = findViewById(R.id.back_to_post_main);
         post_done = findViewById(R.id.post_done);
-        post_title = findViewById(R.id.post_title);
         post_main_text = findViewById(R.id.post_main_text);
         mintemp = findViewById(R.id.image_mintemp);
         maxtemp = findViewById(R.id.image_maxtemp);
@@ -448,9 +446,7 @@ public void setPost(){
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     boolean b = TextUtils.isEmpty(image_uri);
-    if(post_title.getText().length()==0){
-        api.getToast(this,"제목을 입력해주세요.");
-    }else if(post_main_text.getText().length()==0){
+    if(post_main_text.getText().length()==0){
         api.getToast(this,"내용을 입력해주세요.");
     }else if(b){
         api.getToast(this,"이미지를 업로드해주세요.");
@@ -467,7 +463,6 @@ public void setPost(){
         h = h.replace(":","");
 
 
-        String title = post_title.getText().toString();
         String content = post_main_text.getText().toString();
         String image = image_uri;
         String user_name_str = user_name;
@@ -480,7 +475,7 @@ public void setPost(){
         Long post_likeCount = 0L;
         HashMap<String, Boolean> post_likes = null;
         String postuserid = user.getUid();
-        Post post = new Post(title, content, image, user_name_str, post_min_temp, post_max_temp, post_temp, location
+        Post post = new Post(content, image, user_name_str, post_min_temp, post_max_temp, post_temp, location
                 , post_date, now_date, post_likeCount, post_likes, post_categories, postuserid, user_gender);
         mDatabase.child("post").push().setValue(post);
 

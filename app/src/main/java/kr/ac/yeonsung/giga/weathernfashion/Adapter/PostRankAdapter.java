@@ -28,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
     HomeFragment homeFragment = new HomeFragment();
     private Context context;
     private Activity activity;
+    MainActivity mainActivity;
     String mintemp;
     String maxtemp;
     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -67,7 +70,8 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
         TextView rank,max,min, likecount, post_id;
         ImageView like_home;
         ImageView rank_icon;
-
+        TextView mint;
+        TextView maxt;
         public ViewHolder(View itemView) {
             super(itemView) ;
 
@@ -80,6 +84,8 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
             likecount = itemView.findViewById(R.id.likecount_home);
             post_id = itemView.findViewById(R.id.post_id);
             like_home = itemView.findViewById(R.id.like_home);
+            mint = itemView.findViewById(R.id.mint);
+            maxt = itemView.findViewById(R.id.maxt);
         }
     }
 
@@ -104,7 +110,6 @@ public class PostRankAdapter extends RecyclerView.Adapter<PostRankAdapter.ViewHo
         String post_min_home = mData.get(position).getMin_temp();
         String likecount_str = mData.get(position).getLike();
         String post_id_str = mData.get(position).getPost_id();
-
 
         holder.rank.setText(String.valueOf(position+1));
         holder.max.setText(post_max_home);
