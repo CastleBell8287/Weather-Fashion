@@ -72,8 +72,8 @@ public class HomeFragment extends Fragment{
     TextView si; //현재 지역
     TextView gu; //현재 지역
     TextView dong; //현재 지역
-    TextView min_temp; //최저
-    TextView max_temp; //최고
+    public TextView min_temp; //최저
+    public TextView max_temp; //최고
     TextView feel_temp; //체감
     TextView humidity;//습도
     TextView wind_speed;//풍속
@@ -257,8 +257,8 @@ public class HomeFragment extends Fragment{
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             rank_list.clear();
                             for (DataSnapshot document : snapshot.getChildren()) {
-                                System.out.println(document.child("post_max_temp").getValue().toString()+"123");
-                                System.out.println(max_temp.getText().toString()+"456");
+                                //System.out.println(document.child("post_max_temp").getValue().toString()+"123");
+                               // System.out.println(max_temp.getText().toString()+"456");
 //                                if (document.child("post_max_temp").getValue().toString() == max_temp.toString() || document.child("post_min_temp").getValue().toString() == min_temp.toString())
 //                                {
 //                                    String postTitle = document.child("post_title").getValue().toString();
@@ -271,9 +271,11 @@ public class HomeFragment extends Fragment{
 //                                }
                                 String postTitle = document.child("post_title").getValue().toString();
                                 String postImage = document.child("post_image").getValue().toString();
+                                String postlike = document.child("post_likeCount").getValue().toString();
                                 String postMax = document.child("post_max_temp").getValue().toString();
                                 String postMin = document.child("post_min_temp").getValue().toString();
-                                PostRank postRank = new PostRank(postImage, postTitle,postMax,postMin);
+                                String post_id = document.getKey();
+                                PostRank postRank = new PostRank(postImage, postTitle,postMax,postMin,postlike,post_id);
                                 rank_list.add(postRank);
                             }
                             Collections.reverse(rank_list);

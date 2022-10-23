@@ -5,6 +5,8 @@ public class PostRank {
     String title;
     String max_temp;
     String min_temp;
+    String like;
+    String post_id;
 
     public void setMax_temp(String max_temp) {
         this.max_temp = max_temp;
@@ -12,6 +14,22 @@ public class PostRank {
 
     public void setMin_temp(String min_temp) {
         this.min_temp = min_temp;
+    }
+
+    public String getLike() {
+        return like;
+    }
+
+    public void setLike(String like) {
+        this.like = like;
+    }
+
+    public String getPost_id() {
+        return post_id;
+    }
+
+    public void setPost_id(String post_id) {
+        this.post_id = post_id;
     }
 
     public String getMax_temp() {
@@ -30,11 +48,13 @@ public class PostRank {
         this.title = title;
     }
 
-    public PostRank(String image, String title ,String max_temp, String min_temp) {
+    public PostRank(String image, String title ,String max_temp, String min_temp, String like, String post_id) {
         this.image = image;
         this.title = title;
         this.max_temp = max_temp;
         this.min_temp = min_temp;
+        this.like = like;
+        this.post_id = post_id;
     }
 
     public String getImage() {

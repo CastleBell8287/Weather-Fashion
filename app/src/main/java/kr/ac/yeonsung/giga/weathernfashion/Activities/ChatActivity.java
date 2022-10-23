@@ -69,8 +69,6 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-
         init();
         sendMsg();
 
@@ -290,7 +288,6 @@ public class ChatActivity extends AppCompatActivity {
             public LinearLayout linearLayoutDest;
             public LinearLayout linearLayoutRoot;
             public LinearLayout linearLayoutTime;
-
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);

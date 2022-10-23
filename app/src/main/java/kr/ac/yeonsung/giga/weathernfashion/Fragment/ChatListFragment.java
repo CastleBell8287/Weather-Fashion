@@ -41,7 +41,7 @@ import kr.ac.yeonsung.giga.weathernfashion.VO.PostRank;
 public class ChatListFragment extends Fragment {
     public String user_profile;
     public String user_name;
-    public String user_id;
+    public String user_id, chat_id;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
     DatabaseReference mDatabase;
@@ -122,22 +122,21 @@ public class ChatListFragment extends Fragment {
                     if(hash.containsKey(user.getUid())) {
                         hash.remove(user.getUid());
                         for (DataSnapshot snapshot2 : snapshot1.child("comments").getChildren()) {
-
                             for (Map.Entry<String, Boolean> pair : hash.entrySet()) {
                                 mDatabase.child("users").child(pair.getKey()).addValueEventListener(new ValueEventListener() {
-
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                                         user_profile = snapshot.child("user_profile").getValue().toString();
                                         user_name = snapshot.child("user_name").getValue().toString();
                                         user_id = pair.getKey();
-                                        chat_list.add(new ChatList(user_profile,user_name,user_id));
+                                        chat_id = snapshot1.getKey();
+                                        chat_list.add(new ChatList(user_profile,user_name,user_id,chat_id));
                                         Collections.reverse(chat_list);
                                         System.out.println(chat_list);
                                         adapter = new ChatListAdapter(getContext(), chat_list);
                                         recyclerView.setAdapter(adapter);
                                     }
-
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
 
@@ -162,13 +161,13 @@ public class ChatListFragment extends Fragment {
     public class ChatList {
         public String user_profile;
         public String user_name;
-
+        public String chat_id;
         public String user_id;
 
-        public ChatList(String user_profile, String user_name, String user_id) {
+        public ChatList(String user_profile, String user_name, String user_id, String chat_id) {
             this.user_profile = user_profile;
             this.user_name = user_name;
-
+            this.chat_id = chat_id;
             this.user_id = user_id;
         }
 
@@ -194,6 +193,14 @@ public class ChatListFragment extends Fragment {
 
         public void setUser_id(String user_id) {
             this.user_id = user_id;
+        }
+
+        public String getChat_id() {
+            return chat_id;
+        }
+
+        public void setChat_id(String chat_id) {
+            this.chat_id = chat_id;
         }
     }
 }

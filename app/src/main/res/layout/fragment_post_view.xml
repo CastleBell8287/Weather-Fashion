@@ -36,6 +36,8 @@
             android:id="@+id/view_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
             android:text="유저이름"/>
         </LinearLayout>
         <LinearLayout
@@ -88,7 +90,7 @@
                 android:src="@drawable/ic_baseline_location_on_24"/>
             <TextView
                 android:id="@+id/view_location"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 

@@ -176,7 +176,7 @@ public class API {
     public void getWeatherList(Activity activity, String adLevel1, String adLevel2, TextView mintemp, TextView maxtemp){
         ArrayList<Weather> timeDataList= new ArrayList<Weather>();
         Weather timeData = null;
-        ArrayList<String> temp = new ArrayList<String>();
+        ArrayList<Integer> temp = new ArrayList<Integer>();
         ArrayList<String> tmx = new ArrayList<String>();
         ArrayList<String> tmn = new ArrayList<String>();
         ArrayList<String> sky = new ArrayList<String>();
@@ -261,7 +261,7 @@ public class API {
                     if (jsonEx.get("fcstDate").equals(date)) {
                         switch (jsonEx.get("category").toString()){
                             case "TMP":
-                                temp.add(jsonEx.get("fcstValue").toString());
+                                temp.add(Integer.parseInt(jsonEx.get("fcstValue").toString()));
                                 break;
                             case "SKY":
                                 sky.add(jsonEx.get("fcstValue").toString());
@@ -289,14 +289,19 @@ public class API {
             //그 객체를 다시 TimeDate형으로 캐스트한 ArrayList에 add() 후 return
             for (int y = 0; y < times.length; y++){
                 System.out.println("온도 " + temp.get(y) + " 강수 " + pty.get(y) + " 하늘 " + sky.get(y) +" 시간 " + times[y]);
-                Weather weather = new Weather(times[y], sky.get(y), pty.get(y), temp.get(y));
+                Weather weather = new Weather(times[y], sky.get(y), pty.get(y), temp.get(y).toString());
                 mDatabase.child(date2).child(String.valueOf(y)).setValue(weather);
             }
+
+            System.out.println(Collections.max(temp));
+            System.out.println(Collections.min(temp));
+            System.out.println(temp);
+
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mintemp.setText(tmn.get(0).substring(0,tmn.get(0).lastIndexOf("."))+"°");
-                    maxtemp.setText(tmx.get(0).substring(0,tmx.get(0).lastIndexOf("."))+"°");
+                    mintemp.setText(Collections.min(temp)+"°");
+                    maxtemp.setText(Collections.max(temp)+"°");
                 }
             });
             rd.close();
