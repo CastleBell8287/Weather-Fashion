@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -186,24 +188,26 @@ public class HomeFragment extends Fragment{
             @Override
             public void run() {
                 try {
-
                     api.getWeatherNow(getActivity(), weather_icon,nowTemp, nowWeather, si, gu, dong, feel_temp, humidity, wind_speed, cloud, weatherCode);
-                    // 이 위치가 아니면 메소드가 실행이 안됩니다 list2에 값은 저장되는데 이 스레드 밖으로 나가면 사라져요 이걸 해결해야할 것 같습니다
 
 
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
+
                             api.getMyAddress(si,gu,dong);
                             api.getWeatherList(getActivity(),si.getText().toString(), gu.getText().toString(), min_temp,max_temp, mint_str, maxt_str);
                             getDailyWeather();
+                            // 이 위치가 아니면 메소드가 실행이 안됩니다 list2에 값은 저장되는데 이 스레드 밖으로 나가면 사라져요 이걸 해결해야할 것 같습니다
                             mint_str = min_temp.getText().toString().substring(0,min_temp.getText().toString().lastIndexOf("°"));
                             maxt_str = max_temp.getText().toString().substring(0,max_temp.getText().toString().lastIndexOf("°"));
                             loadingDialog.dismiss();
-                            getPostRank();
+
 
                         }
                     });
+
 
 
                 } catch (Exception e) {
@@ -212,6 +216,7 @@ public class HomeFragment extends Fragment{
             }
         }.start();
 
+        getPostRank();
         setCode();
         api.getWeatherIcon(getActivity(), weather_icon, weatherCodeStr); // 날씨아이콘
        return view;
@@ -239,8 +244,9 @@ public class HomeFragment extends Fragment{
                         public void run() {
                             try {
                                 api.getWeatherNow(getActivity(), weather_icon,nowTemp, nowWeather, si, gu, dong, feel_temp, humidity, wind_speed, cloud, weatherCode);
+                                api.getMyAddress(si,gu,dong);
                                 api.getWeatherList(getActivity(), si.getText().toString(), gu.getText().toString(), min_temp, max_temp, mint_str, maxt_str);
-                                api.getMyAddress(si,gu,dong);// 이 위치가 아니면 메소드가 실행이 안됩니다 list2에 값은 저장되는데 이 스레드 밖으로 나가면 사라져요 이걸 해결해야할 것 같습니다
+                                // 이 위치가 아니면 메소드가 실행이 안됩니다 list2에 값은 저장되는데 이 스레드 밖으로 나가면 사라져요 이걸 해결해야할 것 같습니다
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

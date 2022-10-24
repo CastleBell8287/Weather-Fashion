@@ -42,10 +42,12 @@ import kr.ac.yeonsung.giga.weathernfashion.VO.TempReply;
 public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
     private Context context;
     private ArrayList<TempReply> mData = null;
-    private HashMap<String, Boolean> hash;
+    private HashMap<String, Boolean> hash = new HashMap<>();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+    StorageReference riversRef = storageRef.child("profile");
 
     public ReplyAdapter(Context context, ArrayList<TempReply> mData) {
         this.mData = mData;
@@ -57,7 +59,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
         private CircleImageView user_profile;
         private TextView user_name, reply_text, reply_time,user_id, reply_like_count, comment_count;
         private LayoutInflater mLayoutInflater;
-        private ImageView reply_like, reply_comment;
+        private ImageView reply_like, reply_comment, comment_level;
 
         public ViewHolder(View itemView) {
             super(itemView) ;
@@ -72,7 +74,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
             reply_comment = itemView.findViewById(R.id.reply_comment);
             reply_like_count = itemView.findViewById(R.id.reply_like_count);
             comment_count = itemView.findViewById(R.id.comment_count);
-
+            comment_level = itemView.findViewById(R.id.comment_level);
 
 
 
@@ -102,30 +104,65 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
         holder.reply_time.setText(mData.get(index).getTime());
         holder.user_id.setText(mData.get(index).getUser_id());
 
+        holder.reply_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println(mData.get(index).getPost_id() + " " + mData.get(index).getReply_id());
+                onLikeClicked(mDatabase.child("TempReply").child(mData.get(index).getPost_id())
+                        .child(mData.get(index).getReply_id()));
+            }
+        });
         mDatabase.child("TempReply").child(mData.get(index).getPost_id())
-                .child(mData.get(index).getReply_id()).child("LikeList").addValueEventListener(new ValueEventListener() {
+                .child(mData.get(index).getReply_id()).child("reply_likeCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        holder.reply_like_count.setText(snapshot.getValue().toString());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+        mDatabase.child("TempReply").child(mData.get(index).getPost_id())
+                .child(mData.get(index).getReply_id()).child("mode").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if((Boolean) snapshot.getValue() == true){
+                            holder.comment_level.setVisibility(View.VISIBLE);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+        System.out.println(mData.get(index).getPost_id() + " " +mData.get(index).getReply_id());
+
+        mDatabase.child("TempReply").child(mData.get(index).getPost_id())
+                .child(mData.get(index).getReply_id()).child("likeList").addValueEventListener(
+                        new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                System.out.println(snapshot.getValue());
                 if (snapshot.getValue() != null){
                     hash.clear();
                     hash = (HashMap<String, Boolean>) snapshot.getValue();
                     System.out.println("좋아요 누른 사람들 :" + hash);
-
-                    if (hash.containsKey(mData.get(index).getUser_id())) {
+                    System.out.println("좋아요 누른 사람들 :" + hash.containsKey(mAuth.getCurrentUser().getUid()));
+                    if (hash.containsKey(mAuth.getCurrentUser().getUid())) {
                         System.out.println("해쉬에 내 유저 아이디가 있으면" + hash.containsKey(mAuth.getCurrentUser().getUid()));
-                        if (hash.get(mData.get(index).getUser_id()) == true) {
+                        if (hash.get(mAuth.getCurrentUser().getUid()) == true) {
                             holder.reply_like.setImageResource(R.drawable.ic_baseline_favorite_24);
-                            System.out.println("내 아이디의 값이 true면 : " + hash.get(mAuth.getCurrentUser().getUid()));
                         } else {
                             holder.reply_like.setImageResource(R.drawable.ic_baseline_favorite_border_24);
-                            System.out.println("내 아이디의 값이 false면 : " + hash.get(mAuth.getCurrentUser().getUid()));
                         }
                     } else {
-                        System.out.println("해쉬에 내 유저 아이디가 없으면" + hash.containsKey(mAuth.getCurrentUser().getUid()));
                         holder.reply_like.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                     }
                 }else{
-//                    System.out.println("파이어베이스에 좋아요 누른 사람이 한명도 없으면" + hash.containsKey(mAuth.getCurrentUser().getUid()));
                     holder.reply_like.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                 }
 
@@ -135,14 +172,31 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
 
             }
         });
-        holder.reply_like.setOnClickListener(new View.OnClickListener() {
+
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("user_profile").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                System.out.println(mData.get(index).getPost_id() + " " + mData.get(index).getReply_id());
-                onLikeClicked(mDatabase.child("TempReply").child(mData.get(index).getPost_id())
-                        .child(mData.get(index).getReply_id()));
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String user_profile_str;
+                user_profile_str = snapshot.getValue().toString();
+                riversRef.child(user_profile_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(context).load(uri)
+                                .into(holder.user_profile);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
 
 
     }

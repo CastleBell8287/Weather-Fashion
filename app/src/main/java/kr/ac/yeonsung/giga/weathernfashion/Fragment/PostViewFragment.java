@@ -397,13 +397,14 @@ public class PostViewFragment extends Fragment {
         }
     };
     public void getPostTempReply(String post_id){
-        ArrayList<TempReply> replyList = new ArrayList<>();
-        replyList.clear();
+
         DatabaseReference data = mDatabase.child("TempReply").child(post_id);
         if (data != null) {
             mDatabase.child("TempReply").child(post_id).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    ArrayList<TempReply> replyList = new ArrayList<>();
+                    replyList.clear();
                     for (DataSnapshot snapshot1:snapshot.getChildren()) {
                         String post_id = snapshot.getKey();
                         String content = snapshot1.child("content").getValue().toString();

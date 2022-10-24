@@ -285,16 +285,6 @@ public class API {
                         }
                     }
                 }
-
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("weather").child(adLevel1+" "+adLevel2);
-            //데이터를 ArrayList에 다 저장했으니 시간별 날씨 정보를 인자로 TimeDate 객체를 생성하고
-            //그 객체를 다시 TimeDate형으로 캐스트한 ArrayList에 add() 후 return
-            for (int y = 0; y < times.length; y++){
-                System.out.println("온도 " + temp.get(y) + " 강수 " + pty.get(y) + " 하늘 " + sky.get(y) +" 시간 " + times[y]);
-                Weather weather = new Weather(times[y], sky.get(y), pty.get(y), temp.get(y).toString());
-                mDatabase.child(date2).child(String.valueOf(y)).setValue(weather);
-            }
-
             System.out.println(Collections.max(temp));
             System.out.println(Collections.min(temp));
             System.out.println(temp);
@@ -308,6 +298,16 @@ public class API {
                     maxtemp.setText(Collections.max(temp)+"°");
                 }
             });
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("weather").child(adLevel1+" "+adLevel2);
+            //데이터를 ArrayList에 다 저장했으니 시간별 날씨 정보를 인자로 TimeDate 객체를 생성하고
+            //그 객체를 다시 TimeDate형으로 캐스트한 ArrayList에 add() 후 return
+            for (int y = 0; y < times.length; y++){
+                System.out.println("온도 " + temp.get(y) + " 강수 " + pty.get(y) + " 하늘 " + sky.get(y) +" 시간 " + times[y]);
+                Weather weather = new Weather(times[y], sky.get(y), pty.get(y), temp.get(y).toString());
+                mDatabase.child(date2).child(String.valueOf(y)).setValue(weather);
+            }
+
+
             rd.close();
             conn.disconnect();
 
