@@ -1,6 +1,7 @@
 package kr.ac.yeonsung.giga.weathernfashion.VO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TempReply {
 
@@ -13,9 +14,10 @@ public class TempReply {
     private String name;
     // 댓글의 답글의 답글..답글.. 댓글속의 댓글 일때 맨 꼭대기 댓글을 적음 depth가 1이면 parent와 같음
     private String root;
+    private Long reply_likeCount;
 
     private boolean mode; // 댓글의 답글 달은 댓글인지 체크 //true댓글 안의 댓글 //false 일반 게시물 댓글
-    private ArrayList<String> likeList;// 댓글 좋아요수
+    private HashMap<String, Boolean> likeList = new HashMap<>();// 댓글 좋아요수
     private ArrayList<String> ToReplys;// 댓글의 답글 리스트 //답글갯수로도 작용할것
 
     public String getReply_id() {
@@ -82,11 +84,11 @@ public class TempReply {
         this.mode = mode;
     }
 
-    public ArrayList<String> getLikeList() {
+    public HashMap<String, Boolean> getLikeList() {
         return likeList;
     }
 
-    public void setLikeList(ArrayList<String> likeList) {
+    public void setLikeList(HashMap<String, Boolean> likeList) {
         this.likeList = likeList;
     }
 
@@ -98,12 +100,24 @@ public class TempReply {
         ToReplys = toReplys;
     }
 
-    public TempReply(String post_id, String content, String user_id, String time, String name) {
+    public TempReply(String content, String user_id, String time, String name, Long reply_likeCount) {//데이터를 넣을 때 호출하는 생성자
+
+        this.content = content;
+        this.user_id = user_id;
+        this.time = time;
+        this.name = name;
+        this.reply_likeCount = reply_likeCount;
+    }
+    public TempReply(){
+
+    }
+    public TempReply(String post_id, String content, String user_id, String time, String name, String reply_id) { //가져올 때 호출하는 생성자
         this.post_id = post_id;
         this.content = content;
         this.user_id = user_id;
         this.time = time;
         this.name = name;
+        this.reply_id = reply_id;
     }
 
     public String getName() {
@@ -112,5 +126,13 @@ public class TempReply {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getReply_likeCount() {
+        return reply_likeCount;
+    }
+
+    public void setReply_likeCount(Long reply_likeCount) {
+        this.reply_likeCount = reply_likeCount;
     }
 }

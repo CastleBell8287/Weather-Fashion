@@ -278,8 +278,8 @@ public class PostMethods extends Activity {
         String name = user_name;
         LocalDateTime date = LocalDateTime.now();
         String time = date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"));
-
-        TempReply tempReply = new TempReply(post_id, content, user_id, time, name);
+        Long reply_likeCount = 0L;
+        TempReply tempReply = new TempReply(content, user_id, time, name, reply_likeCount);
         databaseReference.child("TempReply").child(post_id).push().setValue(tempReply);
     }
 

@@ -201,6 +201,7 @@ public class HomeFragment extends Fragment{
                             maxt_str = max_temp.getText().toString().substring(0,max_temp.getText().toString().lastIndexOf("°"));
                             loadingDialog.dismiss();
                             getPostRank();
+
                         }
                     });
 

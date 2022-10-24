@@ -75,8 +75,8 @@ public class API {
             String provider = LocationManager.NETWORK_PROVIDER;
             Location location = lm.getLastKnownLocation(provider);
 //
-//            lon = location.getLongitude();
-//            lat = location.getLatitude();
+            lon = location.getLongitude();
+            lat = location.getLatitude();
 
         }
         if (ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_MEDIA_LOCATION) !=
@@ -285,6 +285,7 @@ public class API {
                         }
                     }
                 }
+
             mDatabase = FirebaseDatabase.getInstance().getReference().child("weather").child(adLevel1+" "+adLevel2);
             //데이터를 ArrayList에 다 저장했으니 시간별 날씨 정보를 인자로 TimeDate 객체를 생성하고
             //그 객체를 다시 TimeDate형으로 캐스트한 ArrayList에 add() 후 return
@@ -299,11 +300,11 @@ public class API {
             System.out.println(temp);
             mint = Collections.min(temp).toString();
             maxt = Collections.max(temp).toString();
+
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mintemp.setText(Collections.min(temp)+"°");
-
                     maxtemp.setText(Collections.max(temp)+"°");
                 }
             });
