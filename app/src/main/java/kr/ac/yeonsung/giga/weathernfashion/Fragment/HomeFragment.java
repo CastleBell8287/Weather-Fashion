@@ -203,7 +203,7 @@ public class HomeFragment extends Fragment{
                             mint_str = min_temp.getText().toString().substring(0,min_temp.getText().toString().lastIndexOf("°"));
                             maxt_str = max_temp.getText().toString().substring(0,max_temp.getText().toString().lastIndexOf("°"));
                             loadingDialog.dismiss();
-
+                            getPostRank();
 
                         }
                     });
@@ -216,7 +216,7 @@ public class HomeFragment extends Fragment{
             }
         }.start();
 
-        getPostRank();
+
         setCode();
         api.getWeatherIcon(getActivity(), weather_icon, weatherCodeStr); // 날씨아이콘
        return view;

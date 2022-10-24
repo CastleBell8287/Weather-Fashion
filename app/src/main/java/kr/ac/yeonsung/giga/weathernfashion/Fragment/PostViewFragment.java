@@ -51,6 +51,7 @@ import kr.ac.yeonsung.giga.weathernfashion.Adapter.ReplyAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
 import kr.ac.yeonsung.giga.weathernfashion.VO.TempReply;
+import kr.ac.yeonsung.giga.weathernfashion.methods.API;
 import kr.ac.yeonsung.giga.weathernfashion.methods.PostMethods;
 
 /**
@@ -160,10 +161,8 @@ public class PostViewFragment extends Fragment {
         id = bundle.getString("id");
         chat_image.setOnClickListener(chatListener);
         delete_post.setOnClickListener(deleteListener);
-
-
-
-
+        getPostTempReply(id);
+        reply_btn.setOnClickListener(replyListener);
         //좋아요 버튼 활성화 체크
         mDatabase.child("post").child(id).child("post_likes").addValueEventListener(new ValueEventListener() {
             @Override
@@ -256,12 +255,12 @@ public class PostViewFragment extends Fragment {
                     user_id = snapshot.child("post_user_id").getValue().toString();
                     user_profile.setOnClickListener(clickListener);
                     view_user_name.setOnClickListener(clickListener);
-                    reply_btn.setOnClickListener(clickListener);
+
                     category_list = (ArrayList<String>) snapshot.child("post_categories").getValue();
                     adapter_list = new CategoryAdapter(getContext(),category_list);
                     recyclerView.setAdapter(adapter_list);
                     adapter_list.notifyDataSetChanged();
-                    getPostTempReply(post_id);
+
                     mDatabase.child("TempReply").child(post_id).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -316,11 +315,9 @@ public class PostViewFragment extends Fragment {
         });
     }
 
-    View.OnClickListener clickListener = new View.OnClickListener() {
+    View.OnClickListener replyListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
-            if(view.getId() == R.id.reply_btn){
 
                 mDatabase.child("users").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -328,6 +325,9 @@ public class PostViewFragment extends Fragment {
                         user_name = snapshot.child("user_name").getValue().toString();
                         System.out.println(user_name);
                         postMethods.setPostTempReply(user.getUid(), post_id, reply_edit.getText().toString(), user_name);
+                        reply_edit.setText("");
+                        API api = new API();
+                        api.getToast(getActivity(),"댓글 작성 완료.");
 
                     }
 
@@ -336,7 +336,13 @@ public class PostViewFragment extends Fragment {
 
                     }
                 });
-            }
+
+        }
+    };
+
+    View.OnClickListener clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
             if(!user_id.equals(user.getUid())) {
                 Bundle result = new Bundle();
                 result.putString("id", user_id);
@@ -398,8 +404,6 @@ public class PostViewFragment extends Fragment {
     };
     public void getPostTempReply(String post_id){
 
-        DatabaseReference data = mDatabase.child("TempReply").child(post_id);
-        if (data != null) {
             mDatabase.child("TempReply").child(post_id).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -428,7 +432,6 @@ public class PostViewFragment extends Fragment {
 
                 }
             });
-        }
 
 
     }
