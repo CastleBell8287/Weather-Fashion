@@ -15,11 +15,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskExecutors;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -272,13 +275,14 @@ public class PostMethods extends Activity {
 
     }
     public void setPostTempReply(String user_id, String post_id, String content, String user_name){
-
+        String name = user_name;
         LocalDateTime date = LocalDateTime.now();
         String time = date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"));
 
-        TempReply tempReply = new TempReply(post_id, content, user_id, time, user_name);
-        databaseReference.child("TempReply").push().setValue(tempReply);
+        TempReply tempReply = new TempReply(post_id, content, user_id, time, name);
+        databaseReference.child("TempReply").child(post_id).push().setValue(tempReply);
     }
+
     public void getWeatherNow_post2(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
         try {
 

@@ -75,7 +75,7 @@
             android:layout_marginLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="좋아요 수"/>
+            android:text="답글 수"/>
     </LinearLayout>
 
 <!--</LinearLayout>-->

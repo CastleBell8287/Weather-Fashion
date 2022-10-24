@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -51,8 +52,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.ChatActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.CategoryAdapter;
+import kr.ac.yeonsung.giga.weathernfashion.Adapter.ReplyAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
+import kr.ac.yeonsung.giga.weathernfashion.VO.TempReply;
 import kr.ac.yeonsung.giga.weathernfashion.methods.PostMethods;
 
 /**
@@ -67,11 +70,13 @@ public class PostViewFragment extends Fragment {
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("post");
     StorageReference riversRef2 = storageRef.child("profile");
-    String user_id, post_id;
+    String user_id, post_id, user_name;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     AlertDialog.Builder builder;
     RecyclerView.Adapter adapter_list;
+    ReplyAdapter replyAdapter;
     RecyclerView recyclerView;
+    ListView temp_reply_view;
     ArrayList<String> category_list = new ArrayList<>();
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
     HashMap<String,Boolean> hash = new HashMap<>();
@@ -134,6 +139,7 @@ public class PostViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recyclerView);
+        temp_reply_view = view.findViewById(R.id.temp_reply_view);
         view_user_name = view.findViewById(R.id.view_user_name);
         view_temp = view.findViewById(R.id.view_temp);
         view_maxtemp = view.findViewById(R.id.view_maxtemp);
@@ -151,6 +157,8 @@ public class PostViewFragment extends Fragment {
         reply_btn = view.findViewById(R.id.reply_btn);
         user_profile = view.findViewById(R.id.user_profile);
         recyclerView.setLayoutManager(layoutManager);
+
+
         Bundle bundle = getArguments();
         id = bundle.getString("id");
         chat_image.setOnClickListener(chatListener);
@@ -256,7 +264,7 @@ public class PostViewFragment extends Fragment {
                     adapter_list = new CategoryAdapter(getContext(),category_list);
                     recyclerView.setAdapter(adapter_list);
                     adapter_list.notifyDataSetChanged();
-
+                    getPostTempReply(post_id);
                     view_content.setText(snapshot.child("post_content").getValue().toString());
                     riversRef.child(snapshot.child("post_image").getValue().toString()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
@@ -270,6 +278,7 @@ public class PostViewFragment extends Fragment {
                         public void onFailure(@NonNull Exception exception) {
                         }
                     });
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 } catch (NullPointerException e){
@@ -304,11 +313,14 @@ public class PostViewFragment extends Fragment {
         public void onClick(View view) {
 
             if(view.getId() == R.id.reply_btn){
-                String user_name = "";
-                mDatabase.child("users").child(user_id).addValueEventListener(new ValueEventListener() {
+
+                mDatabase.child("users").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        user_name = snapshot.child("user_name").getValue().toString();
+                        user_name = snapshot.child("user_name").getValue().toString();
+                        System.out.println(user_name);
+                        postMethods.setPostTempReply(user.getUid(), post_id, reply_edit.getText().toString(), user_name);
+
                     }
 
                     @Override
@@ -316,7 +328,6 @@ public class PostViewFragment extends Fragment {
 
                     }
                 });
-                postMethods.setPostTempReply(user_id, post_id, reply_edit.getText().toString(), user_name);
             }
             if(!user_id.equals(user.getUid())) {
                 Bundle result = new Bundle();
@@ -377,7 +388,34 @@ public class PostViewFragment extends Fragment {
             alertDialog.show();
         }
     };
+    public void getPostTempReply(String post_id){
+        ArrayList<TempReply> replyList = new ArrayList<>();
+        mDatabase.child("TempReply").child(post_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snapshot1:snapshot.getChildren()) {
+                    String post_id = snapshot1.child("post_id").getValue().toString();
+                    String content = snapshot1.child("content").getValue().toString();
+                    String user_id = snapshot1.child("user_id").getValue().toString();
+                    String time = snapshot1.child("time").getValue().toString();
+                    String name = snapshot1.child("name").getValue().toString();
 
+                    TempReply tempReply = new TempReply(post_id, content, user_id, time, name);
+                    replyList.add(tempReply);
+                }
+                replyAdapter = new ReplyAdapter(getContext(), replyList);
+                temp_reply_view.setAdapter(replyAdapter);
+                replyAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
     private void onLikeClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {
 
