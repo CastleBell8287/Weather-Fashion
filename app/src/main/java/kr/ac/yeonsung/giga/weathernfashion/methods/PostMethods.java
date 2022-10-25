@@ -263,7 +263,9 @@ public class PostMethods extends Activity {
             int min_temp_idx = tmn.get(0).indexOf(".");
 
             mintemp.setText(tmn.get(0).substring(0, min_temp_idx));
+            mintemp.append("°");
             maxtemp.setText(tmx.get(0).substring(0, max_temp_idx));
+            maxtemp.append("°");
             temp.setText(tempStr.substring(0, temp_idx));
             date.setText(time);
             date.setVisibility(View.VISIBLE);

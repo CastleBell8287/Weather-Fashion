@@ -211,7 +211,9 @@
                         android:textColor="#d9d9de"
                         android:layout_marginLeft="3dp"
                         android:text="습도"/>
+
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -254,11 +256,18 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="오늘의 날씨"
+            android:textSize="20sp"
+            android:textColor="#d9d9de"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="20dp"
-            >
+            android:elevation="20dp">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
@@ -274,7 +283,7 @@
             android:layout_marginLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="오늘 추천 패션"
+            android:text="오늘의 추천 패션"
             android:textSize="20sp"
             android:textColor="#d9d9de"/>
         <androidx.recyclerview.widget.RecyclerView
@@ -284,8 +293,6 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_morning"
             android:scrollbars="vertical" />
-        <!-- </RelativeLayout>
-     </FrameLayout><-->
 
         <Button
             android:id="@+id/logout_btn"

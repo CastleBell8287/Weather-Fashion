@@ -106,6 +106,7 @@ public class PostActivity extends AppCompatActivity {
         maxtemp = findViewById(R.id.image_maxtemp);
         temp = findViewById(R.id.image_temp);
         postlocation = findViewById(R.id.image_location);
+        temp = findViewById(R.id.image_temp);
         postdate = findViewById(R.id.photo_weather3);
         choice_post_categotis = findViewById(R.id.choice_post_categoris);
         choice_post_categotis2 = findViewById(R.id.choice_post_categoris2);
@@ -453,11 +454,7 @@ public void setPost(){
         post_categories.add("미니멀");
         post_categories.add("캐주얼");
         api.getToast(this,"카테고리를 선택해주세요.");
-    }
-    else if(mintemp.getText().equals("최저온도")){
-        api.getToast(this, "사진에 메타데이터가 없습니다.");
-    }
-    else {
+    }else {
 
         System.out.println("이미지  : " + image_str);
 
