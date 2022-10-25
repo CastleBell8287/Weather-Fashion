@@ -104,9 +104,9 @@ public class PostActivity extends AppCompatActivity {
         post_main_text = findViewById(R.id.post_main_text);
         mintemp = findViewById(R.id.image_mintemp);
         maxtemp = findViewById(R.id.image_maxtemp);
-        temp = findViewById(R.id.image_temp);
+        //    temp = findViewById(R.id.image_temp);
         postlocation = findViewById(R.id.image_location);
-        temp = findViewById(R.id.image_temp);
+        //    temp = findViewById(R.id.image_temp);
         postdate = findViewById(R.id.photo_weather3);
         choice_post_categotis = findViewById(R.id.choice_post_categoris);
         choice_post_categotis2 = findViewById(R.id.choice_post_categoris2);
@@ -276,6 +276,7 @@ public class PostActivity extends AppCompatActivity {
         attrLONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
         attrDate =exif.getAttribute(ExifInterface.TAG_DATETIME);
 
+        postdate.setText(attrDate);
         if((attrLATITUDE!=null)&&(attrLATITUDE_REF!=null)&&(attrLONGITUDE!=null) &&(attrLONGITUDE_REF!=null)){
             valid=true;
             if(attrLATITUDE_REF.equals("N")){
@@ -371,33 +372,33 @@ public class PostActivity extends AppCompatActivity {
         }
         return null;
     }
-public void PostImage(){
-    Uri file = imageUri;
-    System.out.println("tt : "+image_uri);
-  try {
-      image_str = String.valueOf(imageUri).substring(String.valueOf(imageUri).lastIndexOf("/") + 1);
-          System.out.println("image_str: " + image_str);
-          StorageReference riversRef = storageRef.child("post");
-          StorageReference riversRef2 = riversRef.child(file.getLastPathSegment());
-          UploadTask uploadTask = riversRef2.putFile(file);
-          image_uri = image_str;
+    public void PostImage(){
+        Uri file = imageUri;
+        System.out.println("tt : "+image_uri);
+        try {
+            image_str = String.valueOf(imageUri).substring(String.valueOf(imageUri).lastIndexOf("/") + 1);
+            System.out.println("image_str: " + image_str);
+            StorageReference riversRef = storageRef.child("post");
+            StorageReference riversRef2 = riversRef.child(file.getLastPathSegment());
+            UploadTask uploadTask = riversRef2.putFile(file);
+            image_uri = image_str;
 // Register observers to listen for when the download is done or if it fails
-          uploadTask.addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception exception) {
-                  // Handle unsuccessful uploads
-              }
-          }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-              @Override
-              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                  // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                  // ...
-              }
-          });
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                }
+            });
 
-  } catch (NullPointerException e){
-      e.printStackTrace();
-    }
+        } catch (NullPointerException e){
+            e.printStackTrace();
+        }
 //    riversRef.child(image_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 //        @Override
 //        public void onSuccess(Uri uri) {
@@ -419,10 +420,10 @@ public void PostImage(){
 // (See MyAppGlideModule for Loader registration)
 
 
-}
+    }
 
 
-public void getName() {
+    public void getName() {
         mDatabase.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -439,56 +440,56 @@ public void getName() {
 
             }
         });
-}
-
-public void setPost(){
-    Date date = new Date();
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-    boolean b = TextUtils.isEmpty(image_uri);
-    if(post_main_text.getText().length()==0){
-        api.getToast(this,"내용을 입력해주세요.");
-    }else if(b){
-        api.getToast(this,"이미지를 업로드해주세요.");
-    }else if(post_categories.size() == 0){
-        post_categories.add("미니멀");
-        post_categories.add("캐주얼");
-        api.getToast(this,"카테고리를 선택해주세요.");
-    }else {
-
-        System.out.println("이미지  : " + image_str);
-
-        String h = postdate.getText().toString().replace(" ","");
-        h = h.replace("-","");
-        h = h.replace(":","");
-
-
-        String content = post_main_text.getText().toString();
-        String image = image_uri;
-        String user_name_str = user_name;
-        String post_min_temp = mintemp.getText().toString();
-        String post_max_temp = maxtemp.getText().toString();
-        String post_temp = temp.getText().toString();
-        String location = postlocation.getText().toString();
-        String post_date = h;
-        String now_date = sdf.format(date);
-        Long post_likeCount = 0L;
-        HashMap<String, Boolean> post_likes = null;
-        String postuserid = user.getUid();
-        Post post = new Post(content, image, user_name_str, post_min_temp, post_max_temp, post_temp, location
-                , post_date, now_date, post_likeCount, post_likes, post_categories, postuserid, user_gender);
-        mDatabase.child("post").push().setValue(post);
-
-        api.getToast(this,"업로드 성공");
-        Intent intent =new Intent(this,MainActivity.class);
-        startActivity(intent);
     }
-}
-public void getCategories(){
-    String [] str = final_selection.trim().split(" ");
-    post_categories.clear();
-    for(int j = 0; j<str.length; j++){
-        post_categories.add(str[j]);
+
+    public void setPost(){
+        Date date = new Date();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        boolean b = TextUtils.isEmpty(image_uri);
+        if(post_main_text.getText().length()==0){
+            api.getToast(this,"내용을 입력해주세요.");
+        }else if(b){
+            api.getToast(this,"이미지를 업로드해주세요.");
+        }else if(post_categories.size() == 0){
+            post_categories.add("미니멀");
+            post_categories.add("캐주얼");
+            api.getToast(this,"카테고리를 선택해주세요.");
+        }else {
+
+            System.out.println("이미지  : " + image_str);
+
+            String h = postdate.getText().toString().replace(" ","");
+            h = h.replace("-","");
+            h = h.replace(":","");
+
+
+            String content = post_main_text.getText().toString();
+            String image = image_uri;
+            String user_name_str = user_name;
+            String post_min_temp = mintemp.getText().toString();
+            String post_max_temp = maxtemp.getText().toString();
+            String post_temp = temp.getText().toString();
+            String location = postlocation.getText().toString();
+            String post_date = h;
+            String now_date = sdf.format(date);
+            Long post_likeCount = 0L;
+            HashMap<String, Boolean> post_likes = null;
+            String postuserid = user.getUid();
+            Post post = new Post(content, image, user_name_str, post_min_temp, post_max_temp, post_temp, location
+                    , post_date, now_date, post_likeCount, post_likes, post_categories, postuserid, user_gender);
+            mDatabase.child("post").push().setValue(post);
+
+            api.getToast(this,"업로드 성공");
+            Intent intent =new Intent(this,MainActivity.class);
+            startActivity(intent);
+        }
     }
-}
+    public void getCategories(){
+        String [] str = final_selection.trim().split(" ");
+        post_categories.clear();
+        for(int j = 0; j<str.length; j++){
+            post_categories.add(str[j]);
+        }
+    }
 }

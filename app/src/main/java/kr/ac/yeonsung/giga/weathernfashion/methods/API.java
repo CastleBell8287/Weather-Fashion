@@ -36,6 +36,8 @@ public class API {
     String date2;
     Double lon;
     Double lat;
+    String dateNow;
+    DateFormat df = new SimpleDateFormat("yyyyMMdd");
     public static int TO_GRID = 0;
     public static int TO_GPS = 1;
     ArrayList<String> thunder = new ArrayList<>(Arrays.asList("200","201","202"
@@ -51,6 +53,8 @@ public class API {
     String [] times = {"오전 00시","오전 1시","오전 2시","오전 3시","오전 4시","오전 5시","오전 6시","오전 7시","오전 8시",
             "오전 9시","오전 10시","오전 11시","오후 12시","오후 1시","오후 2시","오후 3시","오후 4시","오후 5시",
             "오후 6시","오후 7시","오후 8시","오후 9시","오후 10시","오후 11시"};
+    ArrayList<String> morning = new ArrayList<>(Arrays.asList("07","08","09","10","11","12","13","14","15","16","17","18"));
+    ArrayList<String> night = new ArrayList<>(Arrays.asList("00","01","02","03","04","05","06","19","20","21","22","23"));
     ImageView imageView;
 
     String [] PERMISSIONS = {
@@ -323,6 +327,10 @@ public class API {
     }
 
     public void getWeatherIcon(Activity activity, ImageView imageView, String weatherCode){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        DateFormat df_now = new SimpleDateFormat("HH");
+        dateNow = df_now.format(cal.getTime()) ;
         System.out.println("실행 순서 : 3");
         System.out.println(weatherCode);
         if(thunder.contains(weatherCode)) {
@@ -334,8 +342,10 @@ public class API {
         }else if (snow.contains(weatherCode)) {
             setWeatherIcon(activity, R.raw.snow, imageView);
         }else if (Atmosphere.contains(weatherCode)) {
+
             setWeatherIcon(activity, R.raw.mist, imageView);
-        }else if (weatherCode.equals("800")) {
+        }if(morning.contains(dateNow)){
+            if (weatherCode.equals("800")) {
             setWeatherIcon(activity, R.raw.clear, imageView);
         }else if (weatherCode.equals("801")) {
             setWeatherIcon(activity, R.raw.cloud, imageView);
@@ -345,6 +355,19 @@ public class API {
             setWeatherIcon(activity, R.raw.cloud, imageView);
         }else if (weatherCode.equals("804")) {
             setWeatherIcon(activity, R.raw.cloud, imageView);
+        }
+        }else{
+            if (weatherCode.equals("800")) {
+                setWeatherIcon(activity, R.raw.moon, imageView);
+            }else if (weatherCode.equals("801")) {
+                setWeatherIcon(activity, R.raw.cloud, imageView);
+            }else if (weatherCode.equals("802")) {
+                setWeatherIcon(activity, R.raw.cloud, imageView);
+            }else if (weatherCode.equals("803")) {
+                setWeatherIcon(activity, R.raw.cloud, imageView);
+            }else if (weatherCode.equals("804")) {
+                setWeatherIcon(activity, R.raw.cloud, imageView);
+            }
         }
     }
     public void setWeatherIcon(Activity activity,int resource, ImageView imageView){
