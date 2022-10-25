@@ -114,8 +114,8 @@
                             android:layout_height="wrap_content">
                             <de.hdodenhof.circleimageview.CircleImageView
                                 android:id="@+id/my_profile"
-                                android:layout_width="90dp"
-                                android:layout_height="90dp"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
                                 android:scaleType="centerCrop"/>
                             <ImageView
                                 android:id="@+id/setting"
@@ -179,7 +179,8 @@
                                 android:id="@+id/btn_modify"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="@drawable/ic_pencil" />
+                                android:background="@drawable/ic_pencil"
+                                android:onClick="show_default_dialog"/>
 
                         </LinearLayout>
 
