@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import kr.ac.yeonsung.giga.weathernfashion.Activities.LoginActivity;
+import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.VO.User;
 
 public class UserMethods extends Activity{
@@ -121,6 +122,6 @@ public class UserMethods extends Activity{
 
     public void mystartActivity(Activity activity, Class c){
         Intent intent = new Intent(activity,c);
-        startActivity(intent);
+        activity.startActivity(intent);
     }
 }

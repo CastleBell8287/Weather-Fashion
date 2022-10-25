@@ -115,11 +115,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"/>
-            <TextView
-                android:id="@+id/find_emailnpw"
-                android:text="아이디 / 비밀번호 찾기"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
     </LinearLayout>
