@@ -113,8 +113,8 @@ public class TempReply implements Serializable {
     public TempReply(){
 
     }
-    public TempReply(String post_id, String content, String user_id, String time, String name, Long reply_likeCount,
-                     String reply_id, String root_id, String parent_id, boolean mode){
+    public TempReply(String content, String user_id, String time, String name, Long reply_likeCount,
+                     String root_id, String parent_id, boolean mode){
         this.post_id = post_id;
         this.content = content;
         this.user_id = user_id;

@@ -9,7 +9,6 @@
         android:layout_width="23dp"
         android:layout_height="23dp"
         android:src="@drawable/circle_right_solid"
-        android:visibility="gone"
         android:layout_marginRight="10dp"/>
 <LinearLayout
     android:id="@+id/reply_linear"
@@ -90,6 +89,26 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="답글 수" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/comment_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="4"
+            android:hint="댓글을 입력해주세요"/>
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/comment_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:text="입력"
+            android:src="@drawable/comment_regular"/>
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/comment_view"

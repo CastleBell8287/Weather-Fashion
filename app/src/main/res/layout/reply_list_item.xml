@@ -103,7 +103,7 @@
             android:layout_height="30dp"
             android:layout_weight="1"
             android:text="입력"
-            android:src="@drawable/reply_solid"/>
+            android:src="@drawable/comment_regular"/>
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/comment_view"
