@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".Activities.PostActivity"
     android:padding="5dp">
@@ -16,8 +17,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -25,29 +27,33 @@
                 android:layout_marginTop="5dp"
                 android:textSize="20sp"
                 android:text="패션 정보 공유"/>
-
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
-
             <TextView
                 android:id="@+id/post_done"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="완료"
                 android:textSize="20sp"
-                android:layout_gravity="right"
-                android:padding="5dp"
+                android:gravity="right"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 />
         </LinearLayout>
-
-    <View
-        android:id="@+id/under_line"
-        android:background="@color/white"
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="3px"
-        android:layout_marginBottom="20dp"/>
+        android:layout_height="20dp"
+        android:clickable="false"
+        android:enabled="false"
+        />
+<!--    <View-->
+<!--        android:id="@+id/under_line"-->
+<!--        android:background="@color/white"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="3px"-->
+<!--        android:layout_marginBottom="20dp"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,79 +61,116 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:orientation="vertical">
-        <EditText
-            android:id="@+id/post_main_text"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            app:cardCornerRadius="10dp">
+            <ImageView
+                android:id="@+id/post_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/camera"
+                />
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:hint=" 게시글 내용 작성 \n 날씨 or 불편했던점 (더웠어요, 추웠어요).."
-            android:lines="10"
-            android:gravity="top"
-            />
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="10dp"
-    android:background="@drawable/radius_imgv">
-        <ImageView
-            android:id="@+id/post_img"
-            android:layout_margin="2dp"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/camera"/>
-</LinearLayout>
-        <TextView
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:text="위치"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/image_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text=" 사진을 선택해 주세요."
-            android:textSize="20sp"/>
-        <TextView
-            android:id="@+id/image_temp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="11dp"
+                android:text="날짜"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/photo_weather3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textSize="20sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text=" 사진을 선택해 주세요."
-            android:visibility="gone"
-            android:textSize="20sp"/>
-        <TextView
-            android:id="@+id/image_mintemp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"
-            android:text="최저온도"
-            android:textSize="20sp"/>
-        <TextView
-            android:id="@+id/image_maxtemp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"
-            android:text=" 최고온도"
-            android:textSize="20sp"/>
-        <TextView
-            android:id="@+id/image_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text=""
-            android:visibility="gone"
-            android:textSize="20sp" />
-        <TextView
-            android:id="@+id/photo_weather3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text=""
-            android:visibility="gone"
-            android:textSize="20sp" />
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="최저"
+                    android:textSize="20sp"/>
+
+                <TextView
+                    android:id="@+id/image_mintemp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text=""
+                    android:textSize="20sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="최고"
+                    android:textSize="20sp"/>
+
+                <TextView
+                    android:id="@+id/image_maxtemp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text=""
+                    android:textSize="20sp"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
 
         <EditText
             android:layout_width="match_parent"
@@ -135,6 +178,22 @@
             android:clickable="false"
             android:enabled="false"
             />
+        <EditText
+            android:id="@+id/post_main_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:hint=" 게시글 내용 작성 \n 날씨 or 불편했던점 (더웠어요, 추웠어요).."
+            android:lines="6"
+            android:gravity="top"
+            />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -170,7 +229,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            android:text="카테고리를 선택해 주세요"
+            android:text=""
             android:textSize="20sp" />
     </LinearLayout>
 </LinearLayout>

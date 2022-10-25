@@ -46,6 +46,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#d9d9de"
                 android:textSize="15sp"
                 android:text="최고"/>
 
@@ -53,8 +54,16 @@
                 android:id="@+id/max_temp_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#F38080"
+                android:text="20"
+                android:textSize="15sp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="3dp"
-                android:text="20°"
+                android:textColor="#F38080"
+                android:text="°"
                 android:textSize="15sp"
                 />
         </LinearLayout>
@@ -68,6 +77,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#d9d9de"
                 android:textSize="15sp"
                 android:text="최저"/>
 
@@ -75,9 +85,17 @@
                 android:id="@+id/min_temp_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="3dp"
-                android:text="20°"
+                android:textColor="#00BFD8"
+                android:text="20"
                 android:textSize="15sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#00BFD8"
+                android:layout_marginRight="3dp"
+                android:text="°"
+                android:textSize="15sp"
+                />
         </LinearLayout>
 <TextView
     android:layout_width="wrap_content"
@@ -99,7 +117,9 @@
                 android:id="@+id/likecount_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="2dp"
                 android:textSize="13dp"
+                android:textColor="#d9d9de"
                 android:text="0"/>
 
         </LinearLayout>

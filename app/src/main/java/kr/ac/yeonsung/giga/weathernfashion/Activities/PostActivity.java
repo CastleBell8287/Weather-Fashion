@@ -104,9 +104,9 @@ public class PostActivity extends AppCompatActivity {
         post_main_text = findViewById(R.id.post_main_text);
         mintemp = findViewById(R.id.image_mintemp);
         maxtemp = findViewById(R.id.image_maxtemp);
-        temp = findViewById(R.id.image_temp);
+    //    temp = findViewById(R.id.image_temp);
         postlocation = findViewById(R.id.image_location);
-        temp = findViewById(R.id.image_temp);
+    //    temp = findViewById(R.id.image_temp);
         postdate = findViewById(R.id.photo_weather3);
         choice_post_categotis = findViewById(R.id.choice_post_categoris);
         choice_post_categotis2 = findViewById(R.id.choice_post_categoris2);
@@ -276,6 +276,7 @@ public class PostActivity extends AppCompatActivity {
         attrLONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
         attrDate =exif.getAttribute(ExifInterface.TAG_DATETIME);
 
+        postdate.setText(attrDate);
         if((attrLATITUDE!=null)&&(attrLATITUDE_REF!=null)&&(attrLONGITUDE!=null) &&(attrLONGITUDE_REF!=null)){
             valid=true;
             if(attrLATITUDE_REF.equals("N")){
