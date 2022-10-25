@@ -165,7 +165,6 @@ public class PostViewFragment extends Fragment {
         delete_post.setOnClickListener(deleteListener);
         getPostTempReply(id);
         reply_btn.setOnClickListener(replyListener);
-        reply_set.setOnClickListener(replySetListener);
         //좋아요 버튼 활성화 체크
         mDatabase.child("post").child(id).child("post_likes").addValueEventListener(new ValueEventListener() {
             @Override
@@ -317,24 +316,7 @@ public class PostViewFragment extends Fragment {
             }
         });
     }
-    View.OnClickListener replySetListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (state == false){
-                reply_btn.setVisibility(View.VISIBLE);
-                reply_edit.setVisibility(View.VISIBLE);
-                reply_edit.setHint("댓글을 입력해주세요");
-                mode = false;
-                state = true;
-            }
-            else{
-                reply_btn.setVisibility(View.GONE);
-                reply_edit.setVisibility(View.GONE);
-                state = false;
-            }
 
-        }
-    };
     View.OnClickListener replyListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -428,12 +410,13 @@ public class PostViewFragment extends Fragment {
     };
     public void getPostTempReply(String post_id){
 
-            mDatabase.child("TempReply").child(post_id).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    ArrayList<TempReply> replyList = new ArrayList<>();
-                    replyList.clear();
-                    for (DataSnapshot snapshot1:snapshot.getChildren()) {
+        mDatabase.child("TempReply").child(post_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<TempReply> replyList = new ArrayList<>();
+                replyList.clear();
+                for (DataSnapshot snapshot1:snapshot.getChildren()) {
+                    if (snapshot1.child("mode").getValue().toString() == "false"){
                         String post_id = snapshot.getKey();
                         String content = snapshot1.child("content").getValue().toString();
                         String user_id = snapshot1.child("user_id").getValue().toString();
@@ -442,20 +425,19 @@ public class PostViewFragment extends Fragment {
                         String reply_id = snapshot1.getKey();
                         TempReply tempReply = new TempReply(post_id, content, user_id, time, name, reply_id);
                         replyList.add(tempReply);
-
-
                     }
-                    replyAdapter = new ReplyAdapter(getContext(), replyList);
-                    temp_reply_view.setAdapter(replyAdapter);
-                    replyAdapter.notifyDataSetChanged();
-
                 }
+                replyAdapter = new ReplyAdapter(getContext(), replyList);
+                temp_reply_view.setAdapter(replyAdapter);
+                replyAdapter.notifyDataSetChanged();
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            }
 
-                }
-            });
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
     }

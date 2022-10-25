@@ -225,7 +225,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
             }
         });
-
+        System.out.println(post_id);
 //        mDatabase.child("TempReply").child(post_id).addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot snapshot) {

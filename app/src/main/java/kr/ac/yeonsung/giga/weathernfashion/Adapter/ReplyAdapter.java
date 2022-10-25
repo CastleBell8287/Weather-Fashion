@@ -118,12 +118,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
         holder.reply_text.setText(mData.get(index).getContent());
         holder.reply_time.setText(mData.get(index).getTime());
         holder.user_id.setText(mData.get(index).getUser_id());
-        user_id = user.getUid();
         post_id = mData.get(index).getPost_id();
-
-        root_id = mData.get(index).getReply_id();
-        parent_id = mData.get(index).getReply_id();
-        mode = true;
 
 
         PostMethods postMethods = new PostMethods();
@@ -134,6 +129,11 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
                 mDatabase.child("users").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        user_id = user.getUid();
+                        mode = true;
+                        root_id = mData.get(index).getReply_id();
+                        parent_id = mData.get(index).getReply_id();
                         user_name = snapshot.child("user_name").getValue().toString();
                         content = holder.comment_edit.getText().toString();
                         System.out.println(content);
@@ -254,7 +254,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
 
                 for (DataSnapshot snapshot1:snapshot.getChildren()) {
                     if (snapshot1.child("mode").getValue().toString() == "true"
-                            && snapshot1.child("root").getValue().toString().equals(mData.get(index).getReply_id())
+                            && snapshot1.child("parent").getValue().toString().equals(mData.get(index).getReply_id())
                     ){
                         String postId = snapshot.getKey();
                         String conTent = snapshot1.child("content").getValue().toString();
