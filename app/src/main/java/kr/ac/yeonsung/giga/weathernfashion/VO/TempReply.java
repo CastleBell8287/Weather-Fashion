@@ -1,9 +1,10 @@
 package kr.ac.yeonsung.giga.weathernfashion.VO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TempReply {
+public class TempReply implements Serializable {
 
     private String reply_id; // 비밀 방법은 id 만드는 방법은 많다.
     private String post_id; // 댓글이 속한 게시물
@@ -100,15 +101,30 @@ public class TempReply {
         ToReplys = toReplys;
     }
 
-    public TempReply(String content, String user_id, String time, String name, Long reply_likeCount) {//데이터를 넣을 때 호출하는 생성자
+    public TempReply(String content, String user_id, String time, String name, Long reply_likeCount, boolean mode) {//데이터를 넣을 때 호출하는 생성자
 
         this.content = content;
         this.user_id = user_id;
         this.time = time;
         this.name = name;
         this.reply_likeCount = reply_likeCount;
+        this.mode = mode;
     }
     public TempReply(){
+
+    }
+    public TempReply(String post_id, String content, String user_id, String time, String name, Long reply_likeCount,
+                     String reply_id, String root_id, String parent_id, boolean mode){
+        this.post_id = post_id;
+        this.content = content;
+        this.user_id = user_id;
+        this.time = time;
+        this.name = name;
+        this.reply_likeCount = reply_likeCount;
+        this.reply_id = reply_id;
+        this.root = root_id;
+        this.parent = parent_id;
+        this.mode = mode;
 
     }
     public TempReply(String post_id, String content, String user_id, String time, String name, String reply_id) { //가져올 때 호출하는 생성자

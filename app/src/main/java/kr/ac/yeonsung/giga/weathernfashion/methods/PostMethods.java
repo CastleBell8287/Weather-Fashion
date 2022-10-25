@@ -274,15 +274,24 @@ public class PostMethods extends Activity {
         }
 
     }
-    public void setPostTempReply(String user_id, String post_id, String content, String user_name){
+    public void setPostTempReply(String user_id, String post_id, String content, String user_name, boolean mode){
         String name = user_name;
         LocalDateTime date = LocalDateTime.now();
         String time = date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"));
         Long reply_likeCount = 0L;
-        TempReply tempReply = new TempReply(content, user_id, time, name, reply_likeCount);
+        TempReply tempReply = new TempReply(content, user_id, time, name, reply_likeCount, mode);
         databaseReference.child("TempReply").child(post_id).push().setValue(tempReply);
     }
-
+    public void setTempReplyComment(String user_id, String post_id, String content, String user_name,
+                                 String reply_id, String root_id, String parent_id, boolean mode){
+        String name = user_name;
+        LocalDateTime date = LocalDateTime.now();
+        String time = date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"));
+        Long reply_likeCount = 0L;
+        TempReply tempReply = new TempReply(post_id, content, user_id, time, name, reply_likeCount,
+                                 reply_id, root_id, parent_id, mode);
+        databaseReference.child("TempReply").child(post_id).push().setValue(tempReply);
+    }
     public void getWeatherNow_post2(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
         try {
 

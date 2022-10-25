@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +45,8 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
     private Context context;
     private ArrayList<TempReply> mData = null;
     private HashMap<String, Boolean> hash = new HashMap<>();
+    private boolean state = false;
+    private boolean mode = false;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -59,7 +63,8 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
         private CircleImageView user_profile;
         private TextView user_name, reply_text, reply_time,user_id, reply_like_count, comment_count;
         private LayoutInflater mLayoutInflater;
-        private ImageView reply_like, reply_comment, comment_level;
+        private ImageView reply_like, reply_comment, comment_btn;
+        private EditText comment_edit;
 
         public ViewHolder(View itemView) {
             super(itemView) ;
@@ -74,8 +79,8 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
             reply_comment = itemView.findViewById(R.id.reply_comment);
             reply_like_count = itemView.findViewById(R.id.reply_like_count);
             comment_count = itemView.findViewById(R.id.comment_count);
-            comment_level = itemView.findViewById(R.id.comment_level);
-
+            comment_btn = itemView.findViewById(R.id.comment_btn);
+            comment_edit = itemView.findViewById(R.id.comment_edit);
 
 
         }
@@ -103,7 +108,12 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
         holder.reply_text.setText(mData.get(index).getContent());
         holder.reply_time.setText(mData.get(index).getTime());
         holder.user_id.setText(mData.get(index).getUser_id());
+        holder.comment_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
         holder.reply_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +122,26 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
                         .child(mData.get(index).getReply_id()));
             }
         });
+        holder.reply_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (state == false){
+                    holder.comment_edit.setVisibility(View.VISIBLE);
+                    holder.comment_btn.setVisibility(View.VISIBLE);
+                    holder.comment_edit.setHint("답글을 입력해주세요");
+                    state = true;
+                    mode = true;
+                }
+                else{
+                    holder.comment_btn.setVisibility(View.GONE);
+                    holder.comment_edit.setVisibility(View.GONE);
+                    state = false;
+                    mode = false;
+                }
+            }
+        });
+
+
         mDatabase.child("TempReply").child(mData.get(index).getPost_id())
                 .child(mData.get(index).getReply_id()).child("reply_likeCount").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -124,21 +154,21 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
 
                     }
                 });
-        mDatabase.child("TempReply").child(mData.get(index).getPost_id())
-                .child(mData.get(index).getReply_id()).child("mode").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if((Boolean) snapshot.getValue() == true){
-                            holder.comment_level.setVisibility(View.VISIBLE);
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+//        mDatabase.child("TempReply").child(mData.get(index).getPost_id())
+//                .child(mData.get(index).getReply_id()).child("mode").addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if((Boolean) snapshot.getValue() == true){
+//                            holder.comment_level.setVisibility(View.VISIBLE);
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
         System.out.println(mData.get(index).getPost_id() + " " +mData.get(index).getReply_id());
 
         mDatabase.child("TempReply").child(mData.get(index).getPost_id())

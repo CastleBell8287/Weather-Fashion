@@ -80,9 +80,11 @@ public class PostViewFragment extends Fragment {
     String id;
     EditText reply_edit;
     TextView view_user_name,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content, reply_count;
-    ImageView reply_btn, view_image,like, delete_post, chat_image;
+    ImageView reply_btn, view_image,like, delete_post, chat_image, reply_set;
     CircleImageView user_profile;
     PostMethods postMethods = new PostMethods();
+    boolean state = false;
+    boolean mode = false;
     public static final String LOCAL_BROADCAST = "com.xfhy.casualweather.LOCAL_BROADCAST";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -156,13 +158,14 @@ public class PostViewFragment extends Fragment {
         user_profile = view.findViewById(R.id.user_profile);
         recyclerView.setLayoutManager(layoutManager);
         temp_reply_view.setLayoutManager(layoutManager2);
-
+        reply_set = view.findViewById(R.id.reply_set);
         Bundle bundle = getArguments();
         id = bundle.getString("id");
         chat_image.setOnClickListener(chatListener);
         delete_post.setOnClickListener(deleteListener);
         getPostTempReply(id);
         reply_btn.setOnClickListener(replyListener);
+        reply_set.setOnClickListener(replySetListener);
         //좋아요 버튼 활성화 체크
         mDatabase.child("post").child(id).child("post_likes").addValueEventListener(new ValueEventListener() {
             @Override
@@ -314,7 +317,24 @@ public class PostViewFragment extends Fragment {
             }
         });
     }
+    View.OnClickListener replySetListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (state == false){
+                reply_btn.setVisibility(View.VISIBLE);
+                reply_edit.setVisibility(View.VISIBLE);
+                reply_edit.setHint("댓글을 입력해주세요");
+                mode = false;
+                state = true;
+            }
+            else{
+                reply_btn.setVisibility(View.GONE);
+                reply_edit.setVisibility(View.GONE);
+                state = false;
+            }
 
+        }
+    };
     View.OnClickListener replyListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -322,12 +342,16 @@ public class PostViewFragment extends Fragment {
                 mDatabase.child("users").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        System.out.println(mode);
                         user_name = snapshot.child("user_name").getValue().toString();
                         System.out.println(user_name);
-                        postMethods.setPostTempReply(user.getUid(), post_id, reply_edit.getText().toString(), user_name);
+                        postMethods.setPostTempReply(user.getUid(), post_id, reply_edit.getText().toString(), user_name, mode);
                         reply_edit.setText("");
                         API api = new API();
                         api.getToast(getActivity(),"댓글 작성 완료.");
+
+
 
                     }
 

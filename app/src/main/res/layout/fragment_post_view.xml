@@ -201,7 +201,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <ImageView
-
+                    android:id="@+id/reply_set"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="5dp"
@@ -257,12 +257,14 @@
             android:layout_weight="5"
             android:orientation="horizontal">
             <EditText
+                android:visibility="gone"
                 android:id="@+id/reply_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:hint="댓글을 입력해주세요"/>
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/reply_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
