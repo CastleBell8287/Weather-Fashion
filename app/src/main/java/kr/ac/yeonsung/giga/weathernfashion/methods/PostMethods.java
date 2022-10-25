@@ -286,7 +286,7 @@ public class PostMethods extends Activity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snapshot1:snapshot.getChildren()) {
                     String parentId = snapshot1.getKey();
-                    databaseReference.child("TempReply").child(post_id).child(snapshot1.getKey()).child("parent").setValue(parentId);
+                    databaseReference.child("TempReply").child(post_id).child(snapshot1.getKey()).child("root").setValue(parentId);
                 }
             }
 

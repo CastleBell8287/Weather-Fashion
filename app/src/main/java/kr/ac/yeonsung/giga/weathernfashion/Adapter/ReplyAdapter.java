@@ -1,5 +1,6 @@
 package kr.ac.yeonsung.giga.weathernfashion.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -139,6 +141,9 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
                         System.out.println(content);
                         postMethods.setTempReplyComment(user_id, post_id, content, user_name
                                 , root_id, parent_id, mode);
+                        holder.comment_edit.setText("");
+                        API api = new API();
+                        api.getToast((Activity) context,"댓글 작성 완료.");
                     }
 
                     @Override
