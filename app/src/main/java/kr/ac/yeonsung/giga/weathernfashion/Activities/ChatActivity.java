@@ -81,7 +81,6 @@ public class ChatActivity extends AppCompatActivity {
                 ChatModel chatModel = new ChatModel();
                 chatModel.users.put(myuid,true);
                 chatModel.users.put(destUid,true);
-
                 //push() 데이터가 쌓이기 위해 채팅방 key가 생성
                 if(chatRoomUid == null){
                     Toast.makeText(ChatActivity.this, "채팅방 생성", Toast.LENGTH_SHORT).show();
@@ -136,13 +135,18 @@ public class ChatActivity extends AppCompatActivity {
     {
         if(!editText.getText().toString().equals(""))
         {
+            ChatModel chatModel2 = new ChatModel();
+            chatModel2.chatAlert.put(myuid, false);
+            chatModel2.chatAlert.put(destUid, true);
             ChatModel.Comment comment = new ChatModel.Comment();
             comment.uid = myuid;
+
             comment.message = editText.getText().toString();
             comment.timestamp = ServerValue.TIMESTAMP;
             firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
+                    firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("alert").setValue(chatModel2.chatAlert);
                     editText.setText("");
                 }
             });
@@ -306,12 +310,14 @@ public class ChatActivity extends AppCompatActivity {
 
         public Map<String,Boolean> users = new HashMap<>(); //채팅방 유저
         public Map<String, Comment> comments = new HashMap<>(); //채팅 메시지
+        public Map<String, Boolean> chatAlert = new HashMap<>();
 
         public static class Comment
 
         {
             public String uid;
             public String message;
+
             public Object timestamp;
         }
 

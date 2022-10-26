@@ -35,10 +35,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,6 +53,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
@@ -71,6 +74,8 @@ public class MyInfoFragment extends Fragment {
     FirebaseUser user = mAuth.getCurrentUser();
     String image_uri = null;
     String image_str = null;
+    ArrayList<String> chatIdList = new ArrayList<>();
+    HashMap<String, Boolean> chatMap = new HashMap<String, Boolean>();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("profile");
@@ -82,7 +87,7 @@ public class MyInfoFragment extends Fragment {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private Uri imageUri = null;
     TextView myname, mycomment, back_pressed;
-    ImageView setting, chat_image;
+    ImageView setting, chat_image, alert;
     CircleImageView myprofile;
     Button post_write_btn;
     Button btn_modify;
@@ -145,16 +150,44 @@ public class MyInfoFragment extends Fragment {
         post_write_btn.setOnClickListener(btnListener);
         btn_modify = view.findViewById(R.id.btn_modify);
         chat_image = view.findViewById(R.id.chat_image);
+        alert = view.findViewById(R.id.alert);
         btn_modify.setOnClickListener(btnListener_m);
         recyclerView = view.findViewById(R.id.myinfo_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(layoutManager);
         chat_image.setOnClickListener(btnListener);
+
+        setAlert();
         setProfile();
         getMyPostList();
         // Inflate the layout for this fragment
         return view;
+    }
+
+    public void setAlert(){
+        mDatabase.child("chatrooms").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1 : snapshot.getChildren()){
+
+                    System.out.println(chatMap);
+                    if (snapshot1.child("alert").getValue() != null){
+                        chatMap = (HashMap<String, Boolean>) snapshot1.child("alert").getValue();
+                        if (chatMap.containsKey(user.getUid())&&chatMap.get(user.getUid())){
+
+                            alert.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     View.OnClickListener btnListener = new View.OnClickListener() {
@@ -162,11 +195,13 @@ public class MyInfoFragment extends Fragment {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.post_write_btn:
+
                     Intent intent2 = new Intent(getContext(), PostActivity.class);
                     startActivity(intent2);
                     intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     break;
                 case R.id.chat_image:
+                    alert.setVisibility(View.GONE);
                     FragmentManager fm = ((MainActivity) getContext()).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction;
                     ChatListFragment chatFragment = new ChatListFragment();
@@ -195,13 +230,13 @@ public class MyInfoFragment extends Fragment {
             dlg_edit_intro = dialogView.findViewById(R.id.dlg_edit_intro);
 
 
-                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                       mDatabase.child("users").child(user.getUid()).child("user_comment").setValue(dlg_edit_intro.getText().toString());
-                       api.getToast(getActivity(),"한줄 소개 수정완료");
-                    }
-                });
+            builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                   mDatabase.child("users").child(user.getUid()).child("user_comment").setValue(dlg_edit_intro.getText().toString());
+                   api.getToast(getActivity(),"한줄 소개 수정완료");
+                }
+            });
             builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {

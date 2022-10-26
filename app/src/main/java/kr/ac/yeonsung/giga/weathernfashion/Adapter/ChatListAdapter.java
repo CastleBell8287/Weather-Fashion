@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,6 +23,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +37,7 @@ import com.google.firebase.storage.StorageReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.ChatActivity;
@@ -51,6 +56,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     DatabaseReference mDatabase;
     String chat_text;
     String chat_time;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("profile");
@@ -66,6 +72,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         TextView user_id;
         CircleImageView user_profile;
         LinearLayout chatLinear;
+        ImageView alert;
 
 
         public ViewHolder(View itemView) {
@@ -77,6 +84,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             user_profile = itemView.findViewById(R.id.user_profile);
             chat_text = itemView.findViewById(R.id.chat_text);
             chat_time = itemView.findViewById(R.id.chat_time);
+            alert = itemView.findViewById(R.id.alert);
+
 
         }
     }
@@ -88,7 +97,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
     @Override
-    public ChatListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
 
@@ -97,8 +106,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
-    public void onBindViewHolder(ChatListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
         String user_id_str = mData.get(position).getUser_id();
         String user_name_str = mData.get(position).getUser_name();
         String user_profile_str = mData.get(position).getUser_profile();
@@ -106,9 +116,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         System.out.println("챗아이디"+chat_id);
 
-        mDatabase.child("chatrooms").child(chat_id).child("comments").limitToLast(1).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("chatrooms").child(chat_id).child("comments").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 for(DataSnapshot snapshot1 : snapshot.getChildren()) {
                     long unixTime = Long.parseLong(snapshot1.child("timestamp").getValue().toString());
                     Date date = new Date(unixTime);
@@ -124,8 +136,24 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
             }
         });
+        mDatabase.child("chatrooms").child(chat_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                HashMap<String, Boolean> hashMap = new HashMap<String, Boolean>();
+                if (snapshot.child("alert").getValue() != null) {
+                    hashMap = (HashMap<String, Boolean>) snapshot.child("alert").getValue();
+                    if (hashMap.containsKey(user.getUid()) && hashMap.get(user.getUid())) {
+                        holder.alert.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
 
-        System.out.println(user_id_str);
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+            });
+                System.out.println(user_id_str);
         System.out.println(user_profile_str);
         System.out.println(user_name_str);
         holder.user_id.setText(user_id_str);
@@ -147,6 +175,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         holder.chatLinear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                holder.alert.setVisibility(View.GONE);
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("id",user_id_str);
                 context.startActivity(intent);
@@ -158,4 +187,5 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public int getItemCount() {
         return mData.size() ;
     }
+
 }
