@@ -149,7 +149,7 @@ public class PostMethods extends Activity {
         }catch (Exception e){}
         return address;
     }
-    public void getWeatherPost(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
+    public void getWeatherNow(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
         ArrayList<Integer> tempList = new ArrayList<Integer>();
         ArrayList<String> tmx = new ArrayList<String>();
         ArrayList<String> tmn = new ArrayList<String>();
@@ -267,6 +267,7 @@ public class PostMethods extends Activity {
             maxtemp.setText(tmx.get(0).substring(0, max_temp_idx));
             maxtemp.append("°");
             temp.setText(tempStr.substring(0, temp_idx));
+            temp.append("°");
             date.setText(time);
             date.setVisibility(View.VISIBLE);
             rd.close();
@@ -308,7 +309,7 @@ public class PostMethods extends Activity {
                 root_id, parent_id, mode);
         databaseReference.child("TempReply").child(post_id).push().setValue(tempReply);
     }
-    public void getWeatherNow_post2(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
+    public void getWeatherBefore(Activity activity, Float lat_post, Float lon_post, String time, TextView temp, TextView mintemp, TextView maxtemp,TextView date){
         try {
 
             String timeStr = time;
@@ -375,8 +376,11 @@ public class PostMethods extends Activity {
                 max_temp = map2.get("minTa").toString();
             }
             mintemp.setText(min_temp);
+            mintemp.append("°");
             maxtemp.setText(max_temp);
+            maxtemp.append("°");
             temp.setText(temp_str);
+            temp.append("°");
             date.setText(time);
             date.setVisibility(View.VISIBLE);
 

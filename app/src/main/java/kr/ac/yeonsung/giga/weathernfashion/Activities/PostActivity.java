@@ -104,9 +104,9 @@ public class PostActivity extends AppCompatActivity {
         post_main_text = findViewById(R.id.post_main_text);
         mintemp = findViewById(R.id.image_mintemp);
         maxtemp = findViewById(R.id.image_maxtemp);
-        //    temp = findViewById(R.id.image_temp);
+        temp = findViewById(R.id.image_temp);
         postlocation = findViewById(R.id.image_location);
-        //    temp = findViewById(R.id.image_temp);
+
         postdate = findViewById(R.id.photo_weather3);
         choice_post_categotis = findViewById(R.id.choice_post_categoris);
         choice_post_categotis2 = findViewById(R.id.choice_post_categoris2);
@@ -293,10 +293,11 @@ public class PostActivity extends AppCompatActivity {
             }
         }
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd"));
-        if(attrDate.contains(today)){//사진의 메타데이터와 오늘 날짜가 같을 경우 (아직 openweathermap)
-            postMethods.getWeatherPost(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
+        if(attrDate.contains(today)){//사진의 메타데이터와 오늘 날짜가
+            // 같을 경우 (아직 openweathermap)
+            postMethods.getWeatherNow(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
         }else{ // 아닌 경우 종관asos 이전 날씨 조회
-            postMethods.getWeatherNow_post2(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
+            postMethods.getWeatherBefore(PostActivity.this, lat, lon, attrDate,temp,mintemp,maxtemp, postdate);
         }
     }
 
@@ -467,9 +468,19 @@ public class PostActivity extends AppCompatActivity {
             String content = post_main_text.getText().toString();
             String image = image_uri;
             String user_name_str = user_name;
+
             String post_min_temp = mintemp.getText().toString();
+            int minTempIdx = post_min_temp.indexOf("°");
+            post_min_temp = post_min_temp.substring(0, minTempIdx);
+
             String post_max_temp = maxtemp.getText().toString();
+            int maxTempIdx = post_max_temp.indexOf("°");
+            post_max_temp = post_max_temp.substring(0, maxTempIdx);
+
             String post_temp = temp.getText().toString();
+            int TempIdx = post_temp.indexOf("°");
+            post_temp = post_temp.substring(0, TempIdx);
+
             String location = postlocation.getText().toString();
             String post_date = h;
             String now_date = sdf.format(date);
