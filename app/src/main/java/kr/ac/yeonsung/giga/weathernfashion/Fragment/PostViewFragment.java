@@ -247,9 +247,9 @@ public class PostViewFragment extends Fragment {
                     }
                     post_id = snapshot.getKey();
                     view_user_name.setText(snapshot.child("post_user_name").getValue().toString());
-                    view_temp.setText(snapshot.child("post_temp").getValue().toString()+"º");
-                    view_maxtemp.setText(snapshot.child("post_max_temp").getValue().toString()+"º");
-                    view_mintemp.setText(snapshot.child("post_min_temp").getValue().toString()+"º");
+                    view_temp.setText(snapshot.child("post_temp").getValue().toString()+"°");
+                    view_maxtemp.setText(snapshot.child("post_max_temp").getValue().toString()+"°");
+                    view_mintemp.setText(snapshot.child("post_min_temp").getValue().toString()+"°");
                     view_location.setText(snapshot.child("post_location").getValue().toString());
                     likecount.setText(snapshot.child("post_likeCount").getValue().toString());
                     view_date.setText(sdf2.format(date));
