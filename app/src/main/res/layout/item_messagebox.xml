@@ -4,9 +4,9 @@
     android:id="@+id/item_messagebox_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginTop="10dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="20dp"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -15,16 +15,18 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginLeft="10dp"
     >
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/item_messagebox_ImageView_profile"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="10dp"
             />
         <TextView
             android:id="@+id/item_messagebox_TextView_name"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
@@ -43,8 +45,9 @@
                 android:layout_height="wrap_content"
                 android:text="1"
                 android:textSize="9dp"
+                android:layout_marginRight="5dp"
                 android:textColor="#BABABA"
-                android:visibility="invisible"
+                android:visibility="gone"
                 />
 
             <TextView
@@ -61,7 +64,7 @@
                 android:text="1"
                 android:textSize="9dp"
                 android:textColor="#BABABA"
-                android:visibility="invisible"
+                android:visibility="gone"
                 />
 
         </LinearLayout>
@@ -74,6 +77,7 @@
                 android:id="@+id/item_messagebox_textview_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_gravity="right"
                 android:textSize="9sp"
                 android:text="-"

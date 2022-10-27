@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -26,6 +27,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,12 +53,15 @@ import kr.ac.yeonsung.giga.weathernfashion.VO.ChatUser;
 public class ChatActivity extends AppCompatActivity {
     EditText editText;
     Button button;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
     private String chatRoomUid; //채팅방 하나 id
     private String myuid;       //나의 id
     private String destUid;     //상대방 uid
     private RecyclerView recyclerView;
     private ChatUser destUser;
     private int peopleCount;
+    ArrayList<String> test = new ArrayList<>(Arrays.asList("0"));
     private String user_profile;
     private String user_name;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyy.MM.dd HH:mm");
@@ -65,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
     StorageReference riversRef = storageRef.child("profile");
     private DatabaseReference databaseReference;
     private ValueEventListener valueEventListener;
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,12 +142,14 @@ public class ChatActivity extends AppCompatActivity {
     {
         if(!editText.getText().toString().equals(""))
         {
+
             ChatModel chatModel2 = new ChatModel();
             chatModel2.chatAlert.put(myuid, false);
             chatModel2.chatAlert.put(destUid, true);
             ChatModel.Comment comment = new ChatModel.Comment();
             comment.uid = myuid;
-
+            comment.readuser.put(myuid, true);
+            comment.readuser.put(destUid, false);
             comment.message = editText.getText().toString();
             comment.timestamp = ServerValue.TIMESTAMP;
             firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -223,26 +232,27 @@ public class ChatActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_messagebox,parent,false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_left,parent,false);
+            if (viewType == 1) {
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_right, parent, false);
+            }
             return new ViewHolder(view);
         }
-
+        @Override
+        public int getItemViewType(int position){
+            if(comments.get(position).uid.equals(myuid)){
+                return 1;
+            } else {
+                return 2;
+            }
+        }
         @Override
         public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
             ViewHolder viewHolder = ((ViewHolder)holder);
 
-            if(comments.get(position).uid.equals(myuid)) //나의 uid 이면
-            {
-                //나의 말풍선 오른쪽으로
-                viewHolder.textViewMsg.setText(comments.get(position).message);
-                viewHolder.textViewMsg.setBackgroundResource(R.drawable.bg_right_bubble);
-                viewHolder.textViewMsg.setMinHeight(70);
-                viewHolder.textViewMsg.setPadding(20,10,20,10);
-                viewHolder.linearLayoutDest.setVisibility(View.INVISIBLE);        //상대방 레이아웃
-                viewHolder.linearLayoutRoot.setGravity(Gravity.RIGHT);
-                viewHolder.linearLayoutTime.setGravity(Gravity.RIGHT);
 
-            }else{
+                viewHolder.textViewMsg.setText(comments.get(position).message);
+
                 //상대방 말풍선 왼쪽
                 riversRef.child(user_profile).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -257,15 +267,34 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
                 viewHolder.textViewName.setText(user_name);
-                viewHolder.linearLayoutDest.setVisibility(View.VISIBLE);
-                viewHolder.textViewMsg.setBackgroundResource(R.drawable.bg_left_bubble);
-                viewHolder.textViewMsg.setMinHeight(70);
-                viewHolder.textViewMsg.setPadding(20,10,20,10);
                 viewHolder.textViewMsg.setText(comments.get(position).message);
-                viewHolder.linearLayoutRoot.setGravity(Gravity.LEFT);
-                viewHolder.linearLayoutTime.setGravity(Gravity.LEFT);
-            }
+
             viewHolder.textViewTimeStamp.setText(getDateTime(position));
+
+
+            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot snapshot1 : snapshot.getChildren()){
+                        HashMap<String,Boolean> test = (HashMap<String, Boolean>) snapshot1.child("readuser").getValue();
+                        if(test.get(user.getUid()) == false){
+                            test.clear();
+                            test.put(myuid,true);
+                            test.put(destUid,true);
+                            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").child(snapshot1.getKey()).child("readuser").setValue(test);
+                        } else{
+//                            viewHolder.readCount.setVisibility(View.GONE);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
 
         }
 
@@ -288,20 +317,17 @@ public class ChatActivity extends AppCompatActivity {
             public TextView textViewMsg;   //메시지 내용
             public TextView textViewName;
             public TextView textViewTimeStamp;
+            public TextView readCount;
             public CircleImageView imageViewProfile;
-            public LinearLayout linearLayoutDest;
-            public LinearLayout linearLayoutRoot;
-            public LinearLayout linearLayoutTime;
+
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 textViewMsg = (TextView)itemView.findViewById(R.id.item_messagebox_textview_msg);
                 textViewName = (TextView)itemView.findViewById(R.id.item_messagebox_TextView_name);
                 textViewTimeStamp = (TextView)itemView.findViewById(R.id.item_messagebox_textview_timestamp);
+                readCount = itemView.findViewById(R.id.item_messagebox_textview_readCounterLeft);
                 imageViewProfile = itemView.findViewById(R.id.item_messagebox_ImageView_profile);
-                linearLayoutDest = (LinearLayout)itemView.findViewById(R.id.item_messagebox_LinearLayout);
-                linearLayoutRoot = (LinearLayout)itemView.findViewById(R.id.item_messagebox_root);
-                linearLayoutTime = (LinearLayout)itemView.findViewById(R.id.item_messagebox_layout_timestamp);
             }
         }
     }
@@ -313,13 +339,17 @@ public class ChatActivity extends AppCompatActivity {
         public Map<String, Boolean> chatAlert = new HashMap<>();
 
         public static class Comment
-
         {
             public String uid;
             public String message;
-
+            public HashMap<String,Boolean> readuser = new HashMap<>();
             public Object timestamp;
         }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

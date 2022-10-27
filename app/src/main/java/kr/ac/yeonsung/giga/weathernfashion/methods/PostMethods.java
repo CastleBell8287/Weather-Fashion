@@ -137,14 +137,15 @@ public class PostMethods extends Activity {
 
             String str= structure.get("text").toString();
             System.out.println(str);
-            if(str.contains("서울")){
-                address = "108";
-            }else if (str.contains("안양")){
+            if(str.contains("서울")) {
                 address = "108";
             }
-            else if (str.contains("고양")){
-                address = "108";
-            }
+            else if (str.contains("경기")){address = "108";}else if (str.contains("인천")){address = "112";}
+            else if (str.contains("강원")){address = "90";}else if (str.contains("대전")){address = "232";}
+            else if (str.contains("부산")){address = "159";}else if (str.contains("대구")){address = "143";}
+            else if (str.contains("전주")){address = "146";}else if (str.contains("광주")){address = "156";}
+            else if (str.contains("울산")){address = "152";}
+
 
         }catch (Exception e){}
         return address;

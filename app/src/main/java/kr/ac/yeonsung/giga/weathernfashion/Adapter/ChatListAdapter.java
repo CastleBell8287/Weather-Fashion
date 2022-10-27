@@ -36,6 +36,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -179,6 +180,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("id",user_id_str);
                 context.startActivity(intent);
+
+
             }
         });
     }
