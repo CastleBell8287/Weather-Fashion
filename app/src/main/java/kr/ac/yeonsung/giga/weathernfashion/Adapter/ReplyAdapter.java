@@ -51,6 +51,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
     private Context context;
     private ArrayList<TempReply> mData = null;
     private CommentAdapter commentAdapter;
+    String user_id2;
     private HashMap<String, Boolean> hash = new HashMap<>();
     private boolean state = false;
     private boolean mode = false;
@@ -158,6 +159,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
                 System.out.println(mData.get(index).getPost_id() + " " + mData.get(index).getReply_id());
                 onLikeClicked(mDatabase.child("TempReply").child(mData.get(index).getPost_id())
                         .child(mData.get(index).getReply_id()));
+
             }
         });
 
@@ -226,22 +228,32 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
 
             }
         });
-
-        mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("TempReply").child(mData.get(index).getPost_id()).child(mData.get(index).getReply_id()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String user_profile_str;
+                     user_id2 = snapshot.child("user_id").getValue().toString();
+                mDatabase.child("users").child(user_id2).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String user_profile_str;
 
-                user_profile_str = snapshot.child("user_profile").getValue().toString();
-                riversRef.child(user_profile_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Glide.with(context).load(uri)
-                                .into(holder.user_profile);
+                        user_profile_str = snapshot.child("user_profile").getValue().toString();
+                        riversRef.child(user_profile_str).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Glide.with(context).load(uri)
+                                        .into(holder.user_profile);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                            }
+                        });
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
             }
@@ -251,6 +263,8 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>{
 
             }
         });
+
+
         mDatabase.child("TempReply").child(post_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

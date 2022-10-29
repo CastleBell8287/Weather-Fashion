@@ -62,6 +62,7 @@ import kr.ac.yeonsung.giga.weathernfashion.methods.PostMethods;
 public class PostViewFragment extends Fragment {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
+    RecyclerView likelist_recyclerview;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference riversRef = storageRef.child("post");
@@ -70,14 +71,17 @@ public class PostViewFragment extends Fragment {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     AlertDialog.Builder builder;
     RecyclerView.Adapter adapter_list;
+    RecyclerView.Adapter adapter;
     ReplyAdapter replyAdapter;
     RecyclerView recyclerView;
     RecyclerView temp_reply_view;
     ArrayList<String> category_list = new ArrayList<>();
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
     RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+    RecyclerView.LayoutManager layoutManager3 = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
     HashMap<String,Boolean> hash = new HashMap<>();
     String id;
+    HashMap<String,Boolean> hash2 = new HashMap<String, Boolean>();
     EditText reply_edit;
     TextView view_user_name,view_maxtemp,view_temp,view_mintemp,view_location,view_date,likecount,view_now_date,view_content, reply_count;
     ImageView reply_btn, view_image,like, delete_post, chat_image, reply_set;
@@ -257,7 +261,7 @@ public class PostViewFragment extends Fragment {
                     user_id = snapshot.child("post_user_id").getValue().toString();
                     user_profile.setOnClickListener(clickListener);
                     view_user_name.setOnClickListener(clickListener);
-
+                    likecount.setOnClickListener(likeDialogListener);
                     category_list = (ArrayList<String>) snapshot.child("post_categories").getValue();
                     adapter_list = new CategoryAdapter(getContext(),category_list);
                     recyclerView.setAdapter(adapter_list);
@@ -430,6 +434,8 @@ public class PostViewFragment extends Fragment {
                 replyAdapter = new ReplyAdapter(getContext(), replyList);
                 temp_reply_view.setAdapter(replyAdapter);
                 replyAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(replyList.size()-1);
+
 
             }
 
@@ -478,5 +484,42 @@ public class PostViewFragment extends Fragment {
             }
         });
     }
+ View.OnClickListener likeDialogListener = new View.OnClickListener() {
+     @Override
+     public void onClick(View v) {
+         builder = new AlertDialog.Builder(getContext());
+         builder.setTitle("좋아요를 누른 사람들");
+         View dialogView = View.inflate(getContext(),R.layout.dialog_likelist,null);
+         builder.setView(dialogView);
+         likelist_recyclerview = dialogView.findViewById(R.id.likelist_recyclerview);
 
+         try {
+
+
+         } catch (NullPointerException e){
+             API api = new API();
+             api.getToast(getActivity(),"좋아요를 누른 사람이 없어요");
+         }
+
+         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialogInterface, int i) {
+
+             }
+         });
+         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialogInterface, int i) {
+                 dialogInterface.cancel();
+             }
+         });
+         AlertDialog alertDialog = builder.create();
+         alertDialog.show();
+     }
+ };
+
+    public static class likeList {
+        public String user_profile_str;
+        public String user_name_str;
+    }
 }
