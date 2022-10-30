@@ -1,6 +1,8 @@
 package kr.ac.yeonsung.giga.weathernfashion.Activities;
 
 import android.app.FragmentTransaction;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.SurfaceControl;
@@ -8,11 +10,22 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.List;
 
 import kr.ac.yeonsung.giga.weathernfashion.Fragment.PostFragment;
@@ -21,11 +34,18 @@ import kr.ac.yeonsung.giga.weathernfashion.Fragment.MyInfoFragment;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int NOTIFICATION_ID = 0;
+    private NotificationManager mNotificationManager;
     LinearLayout main_ly;
     BottomNavigationView bottom_nav;
-
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    static FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private static final String CHANNEL_ID = user.getUid();
+    int i = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -34,6 +54,59 @@ public class MainActivity extends AppCompatActivity {
 
         //맨 처음 시작할 탭 설정
         bottom_nav.setSelectedItemId(R.id.tab_home);
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // 기기(device)의 SDK 버전 확인 ( SDK 26 버전 이상인지 - VERSION_CODES.O = 26)
+        if(android.os.Build.VERSION.SDK_INT
+                >= android.os.Build.VERSION_CODES.O) {
+            //Channel 정의 생성자( construct 이용 )
+            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "Test Notification", mNotificationManager.IMPORTANCE_HIGH);
+            //Channel에 대한 기본 설정
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setDescription("Notification from Mascot");
+            // Manager을 이용하여 Channel 생성
+            mNotificationManager.createNotificationChannel(notificationChannel);
+
+            mDatabase.child("chatrooms").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        Boolean state = (Boolean)snapshot.child("alert").child(user.getUid()).getValue();
+                        System.out.println(state +" "+ snapshot.child("alert").child(user.getUid()).getKey());
+                        if (state == true){
+                            System.out.println(" 테스트 완료");
+                            mDatabase.child("chatrooms").child(snapshot.getKey()).child("comments").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                                    for (DataSnapshot data:snapshot1.getChildren()
+                                         ) {
+
+                                        String str = data.child("message").getValue().toString();
+                                        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID)
+                                                .setContentTitle("새로운 메시지")// 이 부분에 누가 보낸건지 추가 예정
+                                                .setContentText(str)
+                                                .setSmallIcon(R.drawable.ic_baseline_favorite_24);
+                                        mNotificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+                                    }
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {}
+                            });
+
+                        }
+
+                    }
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+            });
+        }
+
+
     }
 
 

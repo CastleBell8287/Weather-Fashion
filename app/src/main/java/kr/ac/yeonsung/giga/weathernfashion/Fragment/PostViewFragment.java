@@ -487,11 +487,11 @@ public class PostViewFragment extends Fragment {
  View.OnClickListener likeDialogListener = new View.OnClickListener() {
      @Override
      public void onClick(View v) {
-         builder = new AlertDialog.Builder(getContext());
-         builder.setTitle("좋아요를 누른 사람들");
-         View dialogView = View.inflate(getContext(),R.layout.dialog_likelist,null);
-         builder.setView(dialogView);
-         likelist_recyclerview = dialogView.findViewById(R.id.likelist_recyclerview);
+//         builder = new AlertDialog.Builder(getContext());
+//         builder.setTitle("좋아요를 누른 사람들");
+//         View dialogView = View.inflate(getContext(),R.layout.dialog_likelist,null);
+//         builder.setView(dialogView);
+//         likelist_recyclerview = dialogView.findViewById(R.id.likelist_recyclerview);
 
          try {
 
