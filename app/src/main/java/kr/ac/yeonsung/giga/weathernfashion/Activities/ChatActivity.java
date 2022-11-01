@@ -152,13 +152,21 @@ public class ChatActivity extends AppCompatActivity {
             comment.readuser.put(destUid, false);
             comment.message = editText.getText().toString();
             comment.timestamp = ServerValue.TIMESTAMP;
-            firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+
+
+            firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("alert").setValue(chatModel2.chatAlert).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
-                public void onSuccess(Void aVoid) {
-                    firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("alert").setValue(chatModel2.chatAlert);
-                    editText.setText("");
+                public void onSuccess(Void unused) {
+                    firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            editText.setText("");
+                        }
+                    });
                 }
             });
+
         }
     }
     private void init()
@@ -270,21 +278,19 @@ public class ChatActivity extends AppCompatActivity {
                 viewHolder.textViewMsg.setText(comments.get(position).message);
 
             viewHolder.textViewTimeStamp.setText(getDateTime(position));
-
-
             mDatabase.child("chatrooms").child(chatRoomUid).child("comments").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for(DataSnapshot snapshot1 : snapshot.getChildren()){
-                        HashMap<String,Boolean> test = (HashMap<String, Boolean>) snapshot1.child("readuser").getValue();
-                        if(test.get(user.getUid()) == false){
-                            test.clear();
-                            test.put(myuid,true);
-                            test.put(destUid,true);
-                            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").child(snapshot1.getKey()).child("readuser").setValue(test);
-                        } else{
-//                            viewHolder.readCount.setVisibility(View.GONE);
-                        }
+//                        HashMap<String,Boolean> test = (HashMap<String, Boolean>) snapshot1.child("readuser").getValue();
+//                        if(test.get(user.getUid()) == false){
+//                            test.clear();
+//                            test.put(myuid,true);
+//                            test.put(destUid,true);
+//                            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").child(snapshot1.getKey()).child("readuser").setValue(test);
+//                        } else{
+////                            viewHolder.readCount.setVisibility(View.GONE);
+//                        }
                     }
                 }
 
@@ -296,8 +302,10 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-        }
 
+
+        }
+//
         public String getDateTime(int position)
         {
             long unixTime=(long) comments.get(position).timestamp;
