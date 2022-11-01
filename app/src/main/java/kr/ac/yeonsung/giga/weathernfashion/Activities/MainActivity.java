@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String CHANNEL_ID = user.getUid();
     String str;
     String name;
+    String uname = null;
     Boolean state = false;
     int i = 0;
     @Override
@@ -77,13 +78,14 @@ public class MainActivity extends AppCompatActivity {
             NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID);
 
             mDatabase.child("chatrooms").addChildEventListener(new ChildEventListener() {
-
                 @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                }
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     HashMap<String, Boolean> hashMap = new HashMap<String, Boolean>();
                     if (snapshot.child("alert").getValue() != null) {
+                        System.out.println("알림 : "+snapshot.child("alert").getValue());
                         hashMap = (HashMap<String, Boolean>) snapshot.child("alert").getValue();
                         if (hashMap.containsKey(user.getUid()) && hashMap.get(user.getUid())) {
                             mDatabase.child("chatrooms").child(snapshot.getKey()).child("comments").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -91,17 +93,18 @@ public class MainActivity extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot snapshot1) {
                                     for (DataSnapshot data : snapshot1.getChildren()
                                     ) {
+                                        System.out.println("메세지 : "+data.child("message").getValue().toString());
                                         str = data.child("message").getValue().toString();
                                         name = data.child("uid").getValue().toString();
+                                        notifyBuilder.setContentTitle(message_user(name))// 이 부분에 누가 보낸건지 추가 예정
+                                                .setContentText(str)
+                                                .setSmallIcon(R.drawable.ic_baseline_chat_24);
+                                        mNotificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                                     }
                                 }
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {}
                             });
-                            notifyBuilder.setContentTitle(name)// 이 부분에 누가 보낸건지 추가 예정
-                                    .setContentText(str)
-                                    .setSmallIcon(R.drawable.ic_baseline_chat_24);
-                            mNotificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                         }
                     }
                 }
@@ -155,6 +158,24 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         }
+    }
+
+    public String message_user(String uid){
+
+
+        mDatabase.child("users").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                uname = snapshot.child("user_name").getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        return uname;
     }
 
 }

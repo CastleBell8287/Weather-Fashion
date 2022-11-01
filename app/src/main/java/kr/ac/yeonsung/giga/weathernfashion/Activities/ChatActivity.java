@@ -1,6 +1,7 @@
 package kr.ac.yeonsung.giga.weathernfashion.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -265,7 +267,7 @@ public class ChatActivity extends AppCompatActivity {
                 riversRef.child(user_profile).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Glide.with(holder.itemView.getContext()).load(uri)
+                        Glide.with(getApplicationContext()).load(uri)
                                 .into(holder.imageViewProfile);
 
                     }
@@ -278,10 +280,29 @@ public class ChatActivity extends AppCompatActivity {
                 viewHolder.textViewMsg.setText(comments.get(position).message);
 
             viewHolder.textViewTimeStamp.setText(getDateTime(position));
+
+
             mDatabase.child("chatrooms").child(chatRoomUid).child("comments").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot snapshot1 : snapshot.getChildren()){
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                    for(DataSnapshot snapshot1 : snapshot.getChildren()){
 //                        HashMap<String,Boolean> test = (HashMap<String, Boolean>) snapshot1.child("readuser").getValue();
 //                        if(test.get(user.getUid()) == false){
 //                            test.clear();
@@ -289,9 +310,19 @@ public class ChatActivity extends AppCompatActivity {
 //                            test.put(destUid,true);
 //                            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").child(snapshot1.getKey()).child("readuser").setValue(test);
 //                        } else{
-////                            viewHolder.readCount.setVisibility(View.GONE);
+//                            viewHolder.readCount.setVisibility(View.GONE);
 //                        }
-                    }
+//                    }
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
                 }
 
                 @Override
