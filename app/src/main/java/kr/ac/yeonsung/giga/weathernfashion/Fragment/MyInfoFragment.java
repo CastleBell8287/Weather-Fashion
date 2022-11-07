@@ -233,8 +233,12 @@ public class MyInfoFragment extends Fragment {
             builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    try{
                    mDatabase.child("users").child(user.getUid()).child("user_comment").setValue(dlg_edit_intro.getText().toString());
-                   api.getToast(getActivity(),"한줄 소개 수정완료");
+                   api.getToast(getActivity(),"한줄 소개 수정완료");}
+                    catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
                 }
             });
             builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {

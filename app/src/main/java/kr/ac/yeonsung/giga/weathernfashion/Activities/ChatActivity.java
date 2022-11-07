@@ -287,6 +287,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                     //읽음표시 추가
+                    try{
                     if(!comments.get(comments.size()-1).readuser.containsKey(myuid)){
                         firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("comments").updateChildren(readUserMap)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -300,6 +301,8 @@ public class ChatActivity extends AppCompatActivity {
                     }else{
                         notifyDataSetChanged();
                         recyclerView.scrollToPosition(comments.size()-1);
+                    }}catch (ArrayIndexOutOfBoundsException e){
+                        e.printStackTrace();
                     }
                 }
                 @Override

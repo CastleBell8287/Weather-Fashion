@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,7 +64,7 @@ public class HomeFragment extends Fragment{
     RecyclerView.Adapter adapter;
     ImageView weather_icon;
     RecyclerView recyclerView;
-    LinearLayout MainLayout;
+    ScrollView MainLayout;
     LinearLayout SubLayout;
     RecyclerView.Adapter rank_adapter;
     RecyclerView rank_recyclerView;
