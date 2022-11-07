@@ -120,6 +120,7 @@ public class ChatListFragment extends Fragment {
                 System.out.println(snapshot.getValue());
                 for(DataSnapshot snapshot1 : snapshot.getChildren()) {
                     hash = (HashMap<String, Boolean>) snapshot1.child("users").getValue();
+                    chat_list.clear();
                     if(hash.containsKey(user.getUid())) {
                         hash.remove(user.getUid());
                             for (Map.Entry<String, Boolean> pair : hash.entrySet()) {

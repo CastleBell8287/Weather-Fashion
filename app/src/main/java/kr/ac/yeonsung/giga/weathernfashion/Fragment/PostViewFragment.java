@@ -47,6 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.ChatActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Activities.MainActivity;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.CategoryAdapter;
+import kr.ac.yeonsung.giga.weathernfashion.Adapter.LikeListAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.Adapter.ReplyAdapter;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.Post;
@@ -76,6 +77,7 @@ public class PostViewFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView temp_reply_view;
     ArrayList<String> category_list = new ArrayList<>();
+    ArrayList<LikeList> like_list = new ArrayList<>();
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
     RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
     RecyclerView.LayoutManager layoutManager3 = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
@@ -487,14 +489,29 @@ public class PostViewFragment extends Fragment {
  View.OnClickListener likeDialogListener = new View.OnClickListener() {
      @Override
      public void onClick(View v) {
-//         builder = new AlertDialog.Builder(getContext());
-//         builder.setTitle("좋아요를 누른 사람들");
-//         View dialogView = View.inflate(getContext(),R.layout.dialog_likelist,null);
-//         builder.setView(dialogView);
-//         likelist_recyclerview = dialogView.findViewById(R.id.likelist_recyclerview);
-
          try {
+             builder = new AlertDialog.Builder(getContext());
+             builder.setTitle("좋아요를 누른 사람들");
+             View dialogView = View.inflate(getContext(),R.layout.dialog_likelist,null);
+             builder.setView(dialogView);
+             likelist_recyclerview = dialogView.findViewById(R.id.likelist_recyclerview);
+             likelist_recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
 
+             mDatabase.child("post").child(post_id).child("post_likes").addValueEventListener(new ValueEventListener() {
+                 @Override
+                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                     like_list.clear();
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()){
+                        System.out.println("겟키 " +snapshot1.getKey());
+                        list_setting(snapshot1.getKey());
+                    }
+                 }
+
+                 @Override
+                 public void onCancelled(@NonNull DatabaseError error) {
+
+                 }
+             });
 
          } catch (NullPointerException e){
              API api = new API();
@@ -518,8 +535,65 @@ public class PostViewFragment extends Fragment {
      }
  };
 
-    public static class likeList {
-        public String user_profile_str;
-        public String user_name_str;
+    public void list_setting(String like_users){
+        mDatabase.child("users").child(like_users).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String like_profile =  snapshot.child("user_profile").getValue().toString();
+                String like_id = snapshot.getKey();
+                String like_name = snapshot.child("user_name").getValue().toString();
+
+                like_list.add(new LikeList(like_profile, like_id, like_name));
+
+                adapter = new LikeListAdapter(getContext(),like_list);
+                adapter.notifyDataSetChanged();
+                likelist_recyclerview.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
+
+    public class LikeList{
+        public String user_profile;
+        public String user_id;
+        public String user_name;
+
+        public LikeList(String user_profile, String user_id, String user_name) {
+            this.user_profile = user_profile;
+            this.user_id = user_id;
+            this.user_name = user_name;
+        }
+
+        public String getUser_profile() {
+            return user_profile;
+        }
+
+        public void setUser_profile(String user_profile) {
+            this.user_profile = user_profile;
+        }
+
+        public String getUser_id() {
+            return user_id;
+        }
+
+        public void setUser_id(String user_id) {
+            this.user_id = user_id;
+        }
+
+        public String getUser_name() {
+            return user_name;
+        }
+
+        public void setUser_name(String user_name) {
+            this.user_name = user_name;
+        }
+
+
+    }
+
 }

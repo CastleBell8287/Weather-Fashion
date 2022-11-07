@@ -3,6 +3,8 @@ package kr.ac.yeonsung.giga.weathernfashion.Activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +41,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONArray;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +53,8 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import kr.ac.yeonsung.giga.weathernfashion.Fragment.ChatListFragment;
+import kr.ac.yeonsung.giga.weathernfashion.Fragment.PostViewFragment;
 import kr.ac.yeonsung.giga.weathernfashion.R;
 import kr.ac.yeonsung.giga.weathernfashion.VO.ChatUser;
 
@@ -62,6 +68,7 @@ public class ChatActivity extends AppCompatActivity {
     private String destUid;     //상대방 uid
     private RecyclerView recyclerView;
     private ChatUser destUser;
+    List<ChatModel.Comment> comments;
     private int peopleCount;
     ArrayList<String> test = new ArrayList<>(Arrays.asList("0"));
     private String user_profile;
@@ -150,8 +157,6 @@ public class ChatActivity extends AppCompatActivity {
             chatModel2.chatAlert.put(destUid, true);
             ChatModel.Comment comment = new ChatModel.Comment();
             comment.uid = myuid;
-            comment.readuser.put(myuid, true);
-            comment.readuser.put(destUid, false);
             comment.message = editText.getText().toString();
             comment.timestamp = ServerValue.TIMESTAMP;
 
@@ -217,22 +222,85 @@ public class ChatActivity extends AppCompatActivity {
                 }
             });
         }
+        public void setReadCounter(final int position, final TextView textView)
+        {
+            if(peopleCount == 0) {
 
+                firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("users")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                //채팅방 사람 전체를 해시맵으로 받는다.
+                                Map<String, Boolean> users = (Map<String, Boolean>) snapshot.getValue();
+                                peopleCount = users.size();
+                                System.out.println("peoplecount : " + peopleCount);
+                                System.out.println("position : " + comments.get(position).readuser.size());
+                                int count = peopleCount - comments.get(position).readuser.size();
+                                System.out.println("count : " + count);
+                                if (count > 0) {
+                                    textView.setVisibility(View.VISIBLE);
+                                    textView.setText(String.valueOf(count));
+                                    System.out.println("count > 0 : ");
+                                } else {
+                                    textView.setVisibility(View.INVISIBLE);
+                                    System.out.println("count < 0 : ");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+            }else
+            {
+                int count = peopleCount - comments.get(position).readuser.size();
+                if (count > 0) {
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(String.valueOf(count));
+                } else {
+                    textView.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
         //채팅 내용 읽어들임
         private void getMessageList()
         {
-            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").addValueEventListener(new ValueEventListener() {
+            databaseReference = firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("comments");
+            valueEventListener = databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     comments.clear();
 
+                    Map<String, Object> readUserMap = new HashMap<>();
+
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
-                        comments.add(dataSnapshot.getValue(ChatModel.Comment.class));
-                    }
-                    notifyDataSetChanged();
+                        String key = dataSnapshot.getKey();
+                        ChatModel.Comment commentOrigin = dataSnapshot.getValue(ChatModel.Comment.class);
+                        ChatModel.Comment commentModify = dataSnapshot.getValue(ChatModel.Comment.class);
 
-                    recyclerView.scrollToPosition(comments.size()-1);
+                        commentModify.readuser.put(myuid, true);
+                        readUserMap.put(key,commentModify);
+
+                        comments.add(commentOrigin);
+                    }
+
+                    //읽음표시 추가
+                    if(!comments.get(comments.size()-1).readuser.containsKey(myuid)){
+                        firebaseDatabase.getReference().child("chatrooms").child(chatRoomUid).child("comments").updateChildren(readUserMap)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        //갱신
+                                        notifyDataSetChanged();
+                                        recyclerView.scrollToPosition(comments.size()-1);
+                                    }
+                                });
+                    }else{
+                        notifyDataSetChanged();
+                        recyclerView.scrollToPosition(comments.size()-1);
+                    }
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) { }
@@ -281,62 +349,9 @@ public class ChatActivity extends AppCompatActivity {
 
             viewHolder.textViewTimeStamp.setText(getDateTime(position));
 
-
-            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                    for(DataSnapshot snapshot1 : snapshot.getChildren()){
-//                        HashMap<String,Boolean> test = (HashMap<String, Boolean>) snapshot1.child("readuser").getValue();
-//                        if(test.get(user.getUid()) == false){
-//                            test.clear();
-//                            test.put(myuid,true);
-//                            test.put(destUid,true);
-//                            mDatabase.child("chatrooms").child(chatRoomUid).child("comments").child(snapshot1.getKey()).child("readuser").setValue(test);
-//                        } else{
-//                            viewHolder.readCount.setVisibility(View.GONE);
-//                        }
-//                    }
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-
-
-
+            setReadCounter(position, viewHolder.readCount);
 
         }
-//
         public String getDateTime(int position)
         {
             long unixTime=(long) comments.get(position).timestamp;
@@ -359,9 +374,9 @@ public class ChatActivity extends AppCompatActivity {
             public TextView readCount;
             public CircleImageView imageViewProfile;
 
-
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
+
                 textViewMsg = (TextView)itemView.findViewById(R.id.item_messagebox_textview_msg);
                 textViewName = (TextView)itemView.findViewById(R.id.item_messagebox_TextView_name);
                 textViewTimeStamp = (TextView)itemView.findViewById(R.id.item_messagebox_textview_timestamp);
@@ -383,12 +398,28 @@ public class ChatActivity extends AppCompatActivity {
             public String message;
             public HashMap<String,Boolean> readuser = new HashMap<>();
             public Object timestamp;
+
         }
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+        databaseReference.removeEventListener(valueEventListener);
+        Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+//        Bundle result = new Bundle();
+//        result.putString("id", user.getUid());
+//        FragmentManager fm = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction;
+//        ChatListFragment chatListFragment = new ChatListFragment();
+//        chatListFragment.setArguments(result);
+//        fragmentTransaction = fm.beginTransaction();
+//        fragmentTransaction.addToBackStack(null)
+//                .setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
+//                .replace(R.id.main_ly, chatListFragment)
+//                .commit();
     }
 }
