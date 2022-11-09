@@ -73,13 +73,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             reply_time = itemView.findViewById(R.id.reply_time);
             user_id = itemView.findViewById(R.id.user_id);
             reply_like = itemView.findViewById(R.id.reply_like);
-            reply_comment = itemView.findViewById(R.id.reply_comment);
+
             reply_like_count = itemView.findViewById(R.id.reply_like_count);
-            comment_count = itemView.findViewById(R.id.comment_count);
-            comment_btn = itemView.findViewById(R.id.comment_btn);
-            comment_edit = itemView.findViewById(R.id.comment_edit);
+
             comment_level = itemView.findViewById(R.id.comment_level);
-            comment_view = itemView.findViewById(R.id.comment_view);
+
         }
     }
 
@@ -101,31 +99,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     @Override
     public void onBindViewHolder(CommentAdapter.ViewHolder holder, int position) {
         int index = position;
-        holder.comment_view.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         holder.user_name.setText(mData.get(index).getName());
         holder.reply_text.setText(mData.get(index).getContent());
         holder.reply_time.setText(mData.get(index).getTime());
         holder.user_id.setText(mData.get(index).getUser_id());
-        holder.comment_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PostMethods postMethods = new PostMethods();
-                user_id = mAuth.getCurrentUser().getUid();
-                post_id = mData.get(index).getPost_id();
-                content = holder.comment_edit.getText().toString();
 
-                        mDatabase.child("users").child(user_id).child("user_name").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        user_name = snapshot.getValue().toString();}
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}});
-                root_id = mData.get(index).getReply_id();
-                parent_id = mData.get(index).getReply_id();
-                mode = true;
-                postMethods.setTempReplyComment(user_id, post_id, content, user_name
-                        ,root_id, parent_id, mode);
-            }});
         holder.reply_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,24 +112,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                         .child(mData.get(index).getReply_id()));
             }
         });
-        holder.reply_comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (state == false){
-                    holder.comment_edit.setVisibility(View.VISIBLE);
-                    holder.comment_btn.setVisibility(View.VISIBLE);
-                    holder.comment_edit.setHint("답글을 입력해주세요");
-                    state = true;
-                    mode = true;
-                }
-                else{
-                    holder.comment_btn.setVisibility(View.GONE);
-                    holder.comment_edit.setVisibility(View.GONE);
-                    state = false;
-                    mode = false;
-                }
-            }
-        });
+
 
 
         mDatabase.child("TempReply").child(mData.get(index).getPost_id())
