@@ -1,6 +1,7 @@
 # WeatherFashion
 :날씨 API를 이용한 패션 커뮤니티
 
+
 마이페이지 만드는 소스 코드입니다.
 ```java
 
@@ -319,7 +320,7 @@ public class MyInfoFragment extends Fragment {
 
 ```
 
-리사이클러뷰 기능을 이용하여 날씨 알림 만들기
+리사이클러뷰 기능을 이용하여 이용자들에게 날씨를 편리하게 알려주기 위한 코드입니다.
 ```java
 
 recyclerView.setAdapter(adapter);
